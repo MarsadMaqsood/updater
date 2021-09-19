@@ -3,7 +3,7 @@
 ```
 
 dependencies:
-    updater: ^0.0.1
+    updater: ^0.0.2
 
 ``` 
 
