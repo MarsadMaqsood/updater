@@ -77,9 +77,7 @@ class Updater {
     int buildNumber = int.parse(packageInfo.buildNumber);
 
     if (buildNumber < versionCodeNew && downloadUrl.contains('http')) {
-      _downloadUrl =
-          'https://apk-dym.v-mate.mobi/data/apk/vidmate_v4.5030_20210804150251.apk?pub=com.nemo.vidmate.app.websitenew&subpub=app';
-      // _downloadUrl = downloadUrl;
+      _downloadUrl = downloadUrl;
       showDialog(
           context: context,
           barrierDismissible: this.allowSkip,
