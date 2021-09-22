@@ -8,8 +8,8 @@ import 'package:updater/src/update_dialog.dart';
 
 class Updater {
   Updater({
-    required this.url,
     required this.context,
+    required this.url,
     this.allowSkip = true,
     this.confirmText = 'Update',
     this.cancelText = 'Next Time',
@@ -63,18 +63,22 @@ class Updater {
     String contentTxt = data['contentText'];
     int versionCodeNew = data['versionCode'];
     String downloadUrl = data['url'];
+    int minSupportVersion = data['minSupport'];
 
     if (callBack != null)
       callBack!(data['versionName'], versionCodeNew, contentTxt,
-          data['minSupport'], downloadUrl);
+          minSupportVersion, downloadUrl);
 
     if (contentText == '') {
       contentText = contentTxt;
     }
 
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
     int buildNumber = int.parse(packageInfo.buildNumber);
+
+    if (minSupportVersion >= buildNumber) {
+      allowSkip = false;
+    }
 
     if (buildNumber < versionCodeNew && downloadUrl.contains('http')) {
       _downloadUrl = downloadUrl;

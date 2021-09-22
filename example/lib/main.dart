@@ -41,14 +41,15 @@ class _MyAppState extends State<MyApp> {
 
   checkUpdate() {
     Updater(
-      context: context,
-      url: 'https://codingwithmarsad.web.app/update.json',
-      titleText: 'Stay with time',
-      // backgroundDownload: false,
-      // allowSkip: false,
-      contentText:
-          'Update your app to the latest version to enjoy new feature.',
-      // allowSkip: false,
-    ).check();
+            context: context,
+            url: 'https://codingwithmarsad.web.app/updater.json',
+            titleText: 'Stay with time',
+            // backgroundDownload: false,
+            // allowSkip: false,
+            contentText:
+                'Update your app to the latest version to enjoy new feature.',
+            // allowSkip: false,
+            callBack: (i, ii, iii, iiii, b) {})
+        .check();
   }
 }
