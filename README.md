@@ -1,6 +1,6 @@
 [![Version](https://img.shields.io/pub/v/updater?color=%2354C92F&logo=dart)](https://pub.dev/packages/updater/install)
 
-A flutter package to check for custom in-app update.
+A flutter package to check for custom app update.
 
 ## ⭐ Installing
 ```
@@ -66,8 +66,8 @@ url:          //App file download link
 
 Inside `pubspec.yaml` file
 ```yaml
-# Specify build number using +BuildNumber
-version: 0.0.3+1  #Like here the build number is 1
+# Specify version code using +VersionCode
+version: 0.0.3+1  #Like here the VersionCode is 1
 ```
 
 ```
