@@ -4,12 +4,18 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:updater/src/enums.dart';
 import 'package:updater/src/update_dialog.dart';
+import 'package:updater/src/controller.dart';
+
+export 'src/enums.dart';
+export 'src/controller.dart';
 
 class Updater {
   Updater({
     required this.context,
     required this.url,
+    this.controller,
     this.allowSkip = true,
     this.confirmText = 'Update',
     this.cancelText = 'Next Time',
@@ -28,6 +34,7 @@ class Updater {
   final String url;
 
   ///Allow the dialog to cancel or skip
+  ///Default is `allowSkip = true`
   bool allowSkip;
 
   ///Set confirm button text
@@ -43,19 +50,42 @@ class Updater {
   String? contentText;
 
   ///Set rootNavigator value to dismiss dialog
+  ///Default is `rootNavigator = true`
   final bool? rootNavigator;
 
+  ///set backgroundDownload value to show or hide background download button
+  ///Default is `backgroundDownload = true`
   final bool? backgroundDownload;
 
   ///Callback which return json data
+  ///`String versionName`, `int versionCode`, `String contentText`, `int minSupport`, `String downloadUrl`
+  ///
+  ///```dart
+  ///.callback(String versionName,
+  ///     int versionCode,
+  ///     String contentText,
+  ///     int minSupport,
+  ///     String downloadUrl){
+  ///
+  ///}
+  ///```
   Function(String versionName, int versionCode, String contentText,
       int minSupport, String downloadUrl)? callBack;
+
+  ///UpdaterController to handle callbacks
+  /// Like `listener ` which will return [UpdateStatus]
+  /// `progress` return download progress
+  ///  `onError` will return error traces.
+  final UpdaterController? controller;
 
   ///Add elevation to dialog
   final double? elevation;
 
   ///Function to check for update
   check() async {
+    if (this.controller != null)
+      this.controller!.setValue(UpdateStatus.Checking);
+
     var response = await http.get(Uri.parse(url));
 
     var data = jsonDecode(response.body);
@@ -81,6 +111,7 @@ class Updater {
     }
 
     if (buildNumber < versionCodeNew && downloadUrl.contains('http')) {
+      if (controller != null) controller!.setValue(UpdateStatus.Checking);
       _downloadUrl = downloadUrl;
       showDialog(
           context: context,
@@ -103,6 +134,7 @@ class Updater {
   _buildDialogUI() {
     return UpdateDialog(
       context: this.context,
+      controller: this.controller ?? null,
       titleText: this.titleText!,
       contentText: this.contentText!,
       confirmText: this.confirmText,

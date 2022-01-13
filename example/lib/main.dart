@@ -23,6 +23,24 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  UpdaterController controller = UpdaterController(
+    listener: (UpdateStatus status) {
+      print('Listener: $status');
+    },
+    progress: (current, total) {
+      print('Progress: $current -- $total');
+    },
+    onError: (status) {
+      print('Error: $status');
+    },
+  );
+  @override
+  void dispose() {
+    controller.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -41,15 +59,17 @@ class _MyAppState extends State<MyApp> {
 
   checkUpdate() {
     Updater(
-            context: context,
-            url: 'https://codingwithmarsad.web.app/updater.json',
-            titleText: 'Stay with time',
-            // backgroundDownload: false,
-            // allowSkip: false,
-            contentText:
-                'Update your app to the latest version to enjoy new feature.',
-            // allowSkip: false,
-            callBack: (i, ii, iii, iiii, b) {})
-        .check();
+      context: context,
+      url: 'https://codingwithmarsad.web.app/updater.json',
+      titleText: 'Stay with time',
+      // backgroundDownload: false,
+      // allowSkip: false,
+      contentText:
+          'Update your app to the latest version to enjoy new feature.',
+      // allowSkip: false,
+      callBack:
+          (versionName, versionCode, contentText, minSupport, downloadUrl) {},
+      controller: controller,
+    ).check();
   }
 }
