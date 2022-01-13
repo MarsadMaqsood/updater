@@ -5,7 +5,7 @@ A flutter package to check for custom in-app update.
 ## ⭐ Installing
 ```
 dependencies:
-    updater: ^0.0.3
+    updater: ^0.0.4
 ```
 
 ## ⚡ Import 
@@ -27,6 +27,7 @@ rootNavigator → bool
 allowSkip → bool
 backgroundDownload → bool
 callBack → Function(String, int, String, int String)
+controller → UpdaterController
 ```
 
 ## Json Structure
@@ -71,6 +72,18 @@ version: 0.0.3+1  #Like here the VersionCode is 1
 ```
 
 ```dart
+    //Controller
+    UpdaterController controller = UpdaterController(
+        listener: (UpdateStatus status) {
+            print('Listener: $status');
+        },
+        progress: (current, total) {
+            print('Progress: $current -- $total');
+        },
+        onError: (status) {
+            print('Error: $status');
+        },
+    );
 
     Updater(
         context: context,
@@ -84,6 +97,8 @@ version: 0.0.3+1  #Like here the VersionCode is 1
         callBack: (verName, verCode, contentText, minSupport, downloadUrl) {
           print(
               '$verName - $verCode - $contentText - $minSupport - $downloadUrl');
-        }).check();
+        },
+        controller: controller,
+    ).check();
 
 ```

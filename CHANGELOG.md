@@ -1,3 +1,7 @@
+## 0.0.4
+- Added `UpdateStatus` and `UpdaterController` to handle update callbacks
+- Improved performance
+
 ## 0.0.3
 Fixed minSupport issue.
 
