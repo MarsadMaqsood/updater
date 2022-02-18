@@ -5,7 +5,7 @@ A flutter package to check for custom in-app update.
 ## ⭐ Installing
 ```
 dependencies:
-    updater: ^0.0.4
+    updater: ^0.0.5
 ```
 
 ## ⚡ Import 
@@ -41,7 +41,6 @@ url → String
 ```
 
 ```json
-
 {
   "versionCode":3,
   "versionName":"1.0.0",
@@ -49,10 +48,7 @@ url → String
   "minSupport":2,
   "url":"/*App Download Url*/"
 }
-
 ```
-
-
 
 ```
 versionCode:   //Specify new version code
@@ -60,7 +56,6 @@ versionName:   //specify version name
 minSuppor:     //specify minimum supported version to force update
 contentText:   //specify content text, if contentText is not defined in app then this will be use
 url:          //App file download link
-
 ```
 
 ## 📙 How To Use
@@ -100,5 +95,4 @@ version: 0.0.3+1  #Like here the VersionCode is 1
         },
         controller: controller,
     ).check();
-
 ```
