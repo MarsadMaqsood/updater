@@ -85,7 +85,7 @@ class Updater {
   bool updateAvailable = false;
 
   ///Function to check for update
-  check() async {
+  Future<bool> check() async {
     if (this.controller != null)
       this.controller!.setValue(UpdateStatus.Checking);
 
