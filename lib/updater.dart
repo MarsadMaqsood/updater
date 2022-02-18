@@ -81,6 +81,9 @@ class Updater {
   ///Add elevation to dialog
   final double? elevation;
 
+  /// Will return true/false from check() if an update is available
+  bool updateAvailable = false;
+
   ///Function to check for update
   check() async {
     if (this.controller != null)
@@ -119,7 +122,10 @@ class Updater {
           builder: (_) {
             return _buildDialog;
           });
+
+      return true; // update is available
     }
+    return false; // no update is available
   }
 
   late String _downloadUrl;

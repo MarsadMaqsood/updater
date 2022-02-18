@@ -57,8 +57,8 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  checkUpdate() {
-    Updater(
+  checkUpdate() async {
+    bool isAvailable = await Updater(
       context: context,
       url: 'https://codingwithmarsad.web.app/updater.json',
       titleText: 'Stay with time',
@@ -71,5 +71,7 @@ class _MyAppState extends State<MyApp> {
           (versionName, versionCode, contentText, minSupport, downloadUrl) {},
       controller: controller,
     ).check();
+
+    print(isAvailable);
   }
 }
