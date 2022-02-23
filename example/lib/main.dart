@@ -27,6 +27,9 @@ class _MyAppState extends State<MyApp> {
     listener: (UpdateStatus status) {
       print('Listener: $status');
     },
+    onChecked: (bool isAvailable) {
+      print(isAvailable);
+    },
     progress: (current, total) {
       print('Progress: $current -- $total');
     },
@@ -34,6 +37,7 @@ class _MyAppState extends State<MyApp> {
       print('Error: $status');
     },
   );
+
   @override
   void dispose() {
     controller.dispose();
@@ -48,6 +52,7 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: TextButton(
             onPressed: () {
+              print('as');
               checkUpdate();
             },
             child: Text('Check For Update'),

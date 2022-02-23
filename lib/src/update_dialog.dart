@@ -1,5 +1,3 @@
-// ignore_for_file: invalid_use_of_protected_member
-
 import 'dart:io';
 import 'dart:math';
 import 'package:dio/dio.dart';
@@ -10,7 +8,7 @@ import 'package:updater/src/enums.dart';
 import 'package:updater/src/controller.dart';
 
 class UpdateDialog extends StatefulWidget {
-  UpdateDialog({
+  const UpdateDialog({
     Key? key,
     required this.context,
     required this.controller,
@@ -49,6 +47,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
   var token = CancelToken();
   bool _goBackground = false;
   bool isDisposed = false;
+  bool _isUpdated = false;
 
   @override
   void dispose() {
@@ -56,6 +55,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
     progressNotifier.dispose();
     progressPercentNotifier.dispose();
     progressSizeNotifier.dispose();
+
     super.dispose();
   }
 
@@ -315,14 +315,17 @@ class _UpdateDialogState extends State<UpdateDialog> {
           receiveDataWhenStatusError: false,
         ),
         onReceiveProgress: (progress, totalProgress) {
-          if (widget.controller != null) {
-            if (!_isUpdated) {
-              widget.controller!.setValue(UpdateStatus.Dowloading);
-              _isUpdated = true;
-            }
-
-            widget.controller!.setProgress(progress + 0, totalProgress + 0);
+          if (!_isUpdated) {
+            //Update Controller
+            _updateController(UpdateStatus.Dowloading);
+            _isUpdated = true;
           }
+
+          //Update Controller
+          if (widget.controller != null)
+            widget.controller!.setProgress(progress + 0, totalProgress + 0);
+
+          //Update progress bar
           if (!_goBackground || !isDisposed) {
             var percent = progress * 100 / totalProgress;
             progressNotifier.value = progress / totalProgress;
@@ -332,26 +335,38 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 '${_formatBytes(progress, 1)} / ${_formatBytes(totalProgress, 1)}';
           }
           if (progress == totalProgress) {
-            if (widget.controller != null)
-              widget.controller!.setValue(UpdateStatus.Completed);
+            //Update Controller
+            _updateController(UpdateStatus.Completed);
+
+            //Dismiss the dialog
             if (!_goBackground) _dismiss();
+
+            //Open the downloaded update file
             OpenFile.open('$tempPath/app.apk');
           }
         },
         deleteOnError: true,
       );
     } catch (e) {
-      if (widget.controller != null) {
-        if (!token.isCancelled)
-          widget.controller!.setValue(UpdateStatus.Failed);
-        widget.controller!
-            .setError(token.isCancelled ? 'Download Cancelled \n$e' : e);
+      if (e is DioError) {
+        _updateController(UpdateStatus.Cancelled, e);
+      } else {
+        _updateController(UpdateStatus.Failed, e);
       }
+
       print('Download canceled');
     }
   }
 
-  var _isUpdated = false;
+  _updateController(UpdateStatus updateStatus, [e]) {
+    if (widget.controller != null) {
+      widget.controller!.setValue(updateStatus);
+
+      if (e != null)
+        widget.controller!
+            .setError(token.isCancelled ? 'Download Cancelled \n$e' : e);
+    }
+  }
 
   String _formatBytes(int bytes, int decimals) {
     if (bytes <= 0) return "0 B";

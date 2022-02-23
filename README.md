@@ -5,13 +5,15 @@ A flutter package to check for custom in-app update.
 ## ⭐ Installing
 ```
 dependencies:
-    updater: ^0.0.5
+    updater: ^0.0.6
 ```
 
 ## ⚡ Import 
 ```
 import 'package:updater/updater.dart';
 ```
+
+<img src="https://github.com/MarsadMaqsood/AppUpdate/blob/master/assets/image.gif" alt="alt text" width="300" height="620">
 
 ## Properties
 
@@ -28,6 +30,18 @@ allowSkip → bool
 backgroundDownload → bool
 callBack → Function(String, int, String, int String)
 controller → UpdaterController
+```
+
+## UpdateStatus
+```dart
+UpdateStatus.Checking
+UpdateStatus.Available
+UpdateStatus.DialogDismissed
+UpdateStatus.Pending
+UpdateStatus.Dowloading
+UpdateStatus.Completed
+UpdateStatus.Cancelled
+UpdateStatus.Failed
 ```
 
 ## Json Structure
@@ -71,6 +85,9 @@ version: 0.0.3+1  #Like here the VersionCode is 1
     UpdaterController controller = UpdaterController(
         listener: (UpdateStatus status) {
             print('Listener: $status');
+        },
+        onChecked: (bool isAvailable) {
+            print(isAvailable);
         },
         progress: (current, total) {
             print('Progress: $current -- $total');

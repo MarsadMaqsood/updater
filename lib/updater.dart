@@ -73,9 +73,14 @@ class Updater {
       int minSupport, String downloadUrl)? callBack;
 
   ///UpdaterController to handle callbacks
-  /// Like `listener ` which will return [UpdateStatus]
-  /// `progress` return download progress
-  ///  `onError` will return error traces.
+  ///
+  /// `listener ` will return the [UpdateStatus]
+  ///
+  /// `progress` witll return the  download progress
+  ///
+  /// `onError` will return the error traces.
+  ///
+  /// `onChecked` will return true or false based on update available or not
   final UpdaterController? controller;
 
   ///Add elevation to dialog
@@ -86,8 +91,7 @@ class Updater {
 
   ///Function to check for update
   Future<bool> check() async {
-    if (this.controller != null)
-      this.controller!.setValue(UpdateStatus.Checking);
+    _updateController(UpdateStatus.Checking);
 
     var response = await http.get(Uri.parse(url));
 
@@ -114,17 +118,25 @@ class Updater {
     }
 
     if (buildNumber < versionCodeNew && downloadUrl.contains('http')) {
-      if (controller != null) controller!.setValue(UpdateStatus.Checking);
+      _updateAvailable(true);
+      _updateController(UpdateStatus.Available);
+
       _downloadUrl = downloadUrl;
+
       showDialog(
           context: context,
           barrierDismissible: this.allowSkip,
           builder: (_) {
             return _buildDialog;
-          });
+          }).then((value) {
+        if (value == null) {
+          _updateController(UpdateStatus.DialogDismissed);
+        }
+      });
 
       return true; // update is available
     }
+    _updateAvailable(false);
     return false; // no update is available
   }
 
@@ -151,5 +163,17 @@ class Updater {
       backgroundDownload: backgroundDownload!,
       elevation: elevation ?? 0,
     );
+  }
+
+  _updateController(UpdateStatus updateStatus) {
+    if (controller != null) {
+      controller!.setValue(updateStatus);
+    }
+  }
+
+  _updateAvailable(bool value) {
+    if (controller != null) {
+      controller!.setAvailability(value);
+    }
   }
 }
