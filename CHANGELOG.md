@@ -1,4 +1,5 @@
 ## 0.0.6
+- Android compileSdkVersion updated to 31.
 - Added `onChecked` function in `UpdaterController`
 - Added `UpdateStatus.Available` and `UpdateStatus.DialogDismissed`
 - Improved error handeling
