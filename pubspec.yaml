@@ -1,6 +1,6 @@
 name: updater
 description: A package to check for the custom in-app updates for Flutter.
-version: 0.0.6
+version: 0.0.7
 homepage: https://github.com/MarsadMaqsood/updater
 
 environment:
