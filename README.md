@@ -1,6 +1,6 @@
 [![Version](https://img.shields.io/pub/v/updater?color=%2354C92F&logo=dart)](https://pub.dev/packages/updater/install)
 
-A flutter package to check for custom in-app update.
+A package to check for the custom in-app updates for Flutter.
 
 ## ⭐ Installing
 ```

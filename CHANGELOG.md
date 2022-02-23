@@ -1,3 +1,9 @@
+## 0.0.6
+- Added `onChecked` function in `UpdaterController`
+- Added `UpdateStatus.Available` and `UpdateStatus.DialogDismissed`
+- Improved error handeling
+- Fixed some minor issues
+
 ## 0.0.5
 - `Check()` will return a boolean based on the update is available or not.
 ```dart
