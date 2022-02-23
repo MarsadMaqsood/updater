@@ -1,3 +1,6 @@
+## 0.0.7
+- Updated README.md
+
 ## 0.0.6
 - Android compileSdkVersion updated to 31.
 - Added `onChecked` function in `UpdaterController`

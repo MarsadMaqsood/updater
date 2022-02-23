@@ -13,7 +13,7 @@ dependencies:
 import 'package:updater/updater.dart';
 ```
 
-<img src="https://github.com/MarsadMaqsood/AppUpdate/blob/master/assets/image.gif" alt="alt text" width="300" height="620">
+<img src="https://raw.githubusercontent.com/MarsadMaqsood/AppUpdate/master/assets/image.gif" alt="alt text" width="300" height="620">
 
 ## Properties
 
