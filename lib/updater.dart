@@ -53,7 +53,7 @@ class Updater {
   ///Default is `rootNavigator = true`
   final bool? rootNavigator;
 
-  ///set backgroundDownload value to show or hide background download button
+  ///set `backgroundDownload` value to show or hide background download button
   ///Default is `backgroundDownload = true`
   final bool? backgroundDownload;
 

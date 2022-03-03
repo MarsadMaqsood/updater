@@ -43,6 +43,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
   ValueNotifier<double> progressNotifier = ValueNotifier(0.0);
   ValueNotifier<String> progressPercentNotifier = ValueNotifier('');
   ValueNotifier<String> progressSizeNotifier = ValueNotifier('');
+
   bool _changeDialog = false;
   var token = CancelToken();
   bool _goBackground = false;

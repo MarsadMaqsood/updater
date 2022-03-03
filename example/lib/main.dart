@@ -41,7 +41,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     controller.dispose();
-
     super.dispose();
   }
 
