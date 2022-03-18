@@ -58,6 +58,7 @@ class Updater {
   final bool? backgroundDownload;
 
   ///Callback which return json data
+  ///
   ///`String versionName`, `int versionCode`, `String contentText`, `int minSupport`, `String downloadUrl`
   ///
   ///```dart
