@@ -76,7 +76,7 @@ class Updater {
   ///
   /// `listener ` will return the [UpdateStatus]
   ///
-  /// `progress` witll return the  download progress
+  /// `progress` will return the  download progress
   ///
   /// `onError` will return the error traces.
   ///
