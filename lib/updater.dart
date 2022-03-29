@@ -25,6 +25,7 @@ class Updater {
     this.callBack,
     this.backgroundDownload = true,
     this.elevation,
+    this.delay,
   }) : assert(url.contains('http') == true, "Update url is not valid!");
 
   ///Build Context
@@ -87,11 +88,16 @@ class Updater {
   ///Add elevation to dialog
   final double? elevation;
 
+  ///Add delay
+  final Duration? delay;
+
   /// Will return true/false from check() if an update is available
   bool updateAvailable = false;
 
   ///Function to check for update
   Future<bool> check() async {
+    if (delay != null) await Future.delayed(delay!);
+
     _updateController(UpdateStatus.Checking);
 
     var response = await http.get(Uri.parse(url));
