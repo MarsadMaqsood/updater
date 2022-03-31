@@ -37,26 +37,26 @@ class UpdaterController extends ChangeNotifier {
   ///Return error
   Function(Object status)? onError;
 
-  setValue(UpdateStatus status) {
-    if (listener != null) listener!(status);
+  setValue(UpdateStatus _status) {
+    if (listener != null) listener!(_status);
     notifyListeners();
   }
 
-  setAvailability(bool isAvailable) {
+  setAvailability(bool _isAvailable) {
     if (onChecked != null) {
-      onChecked!(isAvailable);
+      onChecked!(_isAvailable);
 
       notifyListeners();
     }
   }
 
-  void setProgress(current, total) {
-    if (progress != null) progress!(current, total);
+  void setProgress(_current, _total) {
+    if (progress != null) progress!(_current, _total);
     notifyListeners();
   }
 
-  void setError(error) {
-    if (onError != null) onError!(error);
+  void setError(_error) {
+    if (onError != null) onError!(_error);
     notifyListeners();
   }
 

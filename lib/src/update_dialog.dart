@@ -192,7 +192,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Downloading...',
             style: TextStyle(
               color: Colors.black,
@@ -200,7 +200,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
               fontSize: 18,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Row(
@@ -250,11 +250,11 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 },
                 padding: EdgeInsets.all(6),
                 constraints: BoxConstraints(),
-                icon: Icon(Icons.clear_rounded),
+                icon: const Icon(Icons.clear_rounded),
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           if (widget.backgroundDownload)
@@ -281,7 +281,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     top: 12,
                     bottom: 12,
                   ),
-                  child: Text(
+                  child: const Text(
                     'Hide',
                     style: TextStyle(
                       color: Colors.white,

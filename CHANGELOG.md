@@ -1,3 +1,6 @@
+## 0.0.8
+- Added `delay: ` before checking for an update
+
 ## 0.0.7
 - Updated README.md
 

@@ -51,7 +51,6 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: TextButton(
             onPressed: () {
-              print('as');
               checkUpdate();
             },
             child: Text('Check For Update'),
@@ -64,6 +63,7 @@ class _MyAppState extends State<MyApp> {
   checkUpdate() async {
     bool isAvailable = await Updater(
       context: context,
+      delay: Duration(milliseconds: 300),
       url: 'https://codingwithmarsad.web.app/updater.json',
       titleText: 'Stay with time',
       // backgroundDownload: false,

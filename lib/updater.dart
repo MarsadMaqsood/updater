@@ -88,7 +88,7 @@ class Updater {
   ///Add elevation to dialog
   final double? elevation;
 
-  ///Add delay
+  ///This will add delay when checking for an update
   final Duration? delay;
 
   /// Will return true/false from check() if an update is available
