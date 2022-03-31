@@ -5,7 +5,7 @@ A package to check for the custom in-app updates for Flutter.
 ## ⭐ Installing
 ```
 dependencies:
-    updater: ^0.0.7
+    updater: ^0.0.8
 ```
 
 ## ⚡ Import 
@@ -30,6 +30,7 @@ allowSkip → bool
 backgroundDownload → bool
 callBack → Function(String, int, String, int String)
 controller → UpdaterController
+delay → Duration
 ```
 
 ## UpdateStatus
