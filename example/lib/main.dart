@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:updater/updater.dart';
 
 void main() {
-  runApp(AppMain());
+  runApp(const AppMain());
 }
 
 class AppMain extends StatelessWidget {
+  const AppMain({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: "Test",
       home: MyApp(),
     );
@@ -53,7 +55,7 @@ class _MyAppState extends State<MyApp> {
             onPressed: () {
               checkUpdate();
             },
-            child: Text('Check For Update'),
+            child: const Text('Check For Update'),
           ),
         ),
       ),
@@ -63,7 +65,7 @@ class _MyAppState extends State<MyApp> {
   checkUpdate() async {
     bool isAvailable = await Updater(
       context: context,
-      delay: Duration(milliseconds: 300),
+      delay: const Duration(milliseconds: 300),
       url: 'https://codingwithmarsad.web.app/updater.json',
       titleText: 'Stay with time',
       // backgroundDownload: false,

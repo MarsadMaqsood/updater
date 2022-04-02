@@ -1,3 +1,6 @@
+## 0.0.9
+- Performance improvements
+
 ## 0.0.8
 - Added `delay: ` before checking for an update
 

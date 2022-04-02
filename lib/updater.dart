@@ -52,7 +52,7 @@ class Updater {
 
   ///Set rootNavigator value to dismiss dialog
   ///Default is `rootNavigator = true`
-  final bool? rootNavigator;
+  final bool rootNavigator;
 
   ///set `backgroundDownload` value to show or hide background download button
   ///Default is `backgroundDownload = true`
@@ -109,9 +109,10 @@ class Updater {
     String downloadUrl = data['url'];
     int minSupportVersion = data['minSupport'];
 
-    if (callBack != null)
+    if (callBack != null) {
       callBack!(data['versionName'], versionCodeNew, contentTxt,
           minSupportVersion, downloadUrl);
+    }
 
     if (contentText == '') {
       contentText = contentTxt;
@@ -132,7 +133,7 @@ class Updater {
 
       showDialog(
           context: context,
-          barrierDismissible: this.allowSkip,
+          barrierDismissible: allowSkip,
           builder: (_) {
             return _buildDialog;
           }).then((value) {
@@ -152,19 +153,19 @@ class Updater {
   Widget get _buildDialog =>
       WillPopScope(onWillPop: _onWillPop, child: _buildDialogUI());
 
-  bool _dismissOnTouchOutside = true;
+  final bool _dismissOnTouchOutside = true;
   Future<bool> _onWillPop() async =>
-      allowSkip ? this._dismissOnTouchOutside : allowSkip;
+      allowSkip ? _dismissOnTouchOutside : allowSkip;
 
   _buildDialogUI() {
     return UpdateDialog(
-      context: this.context,
-      controller: this.controller ?? null,
-      titleText: this.titleText!,
-      contentText: this.contentText!,
-      confirmText: this.confirmText,
-      cancelText: this.cancelText,
-      rootNavigator: this.rootNavigator ?? true,
+      context: context,
+      controller: controller,
+      titleText: titleText!,
+      contentText: contentText!,
+      confirmText: confirmText,
+      cancelText: cancelText,
+      rootNavigator: rootNavigator,
       allowSkip: allowSkip,
       downloadUrl: _downloadUrl,
       backgroundDownload: backgroundDownload!,

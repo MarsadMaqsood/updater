@@ -85,14 +85,14 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 onPressed: () {
                   _dismiss();
                 },
-                icon: Icon(Icons.clear_rounded),
+                icon: const Icon(Icons.clear_rounded),
               ),
             ),
           Container(
             child: Text(
-              '${widget.titleText}',
+              widget.titleText,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -100,21 +100,21 @@ class _UpdateDialogState extends State<UpdateDialog> {
             ),
             alignment: Alignment.center,
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           // widget.content,
           Container(
             child: Text(
-              '${widget.contentText}',
+              widget.contentText,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black,
               ),
             ),
             alignment: Alignment.center,
           ),
-          SizedBox(
+          const SizedBox(
             height: 18,
           ),
           Row(
@@ -135,7 +135,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                       14,
                     ),
                   ),
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                     left: 18,
                     right: 18,
                     top: 12,
@@ -143,7 +143,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                   ),
                   child: Text(
                     '${widget.confirmText}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -163,7 +163,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                         14,
                       ),
                     ),
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                       left: 18,
                       right: 18,
                       top: 12,
@@ -171,7 +171,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     ),
                     child: Text(
                       '${widget.cancelText}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
@@ -210,8 +210,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 valueListenable: progressSizeNotifier,
                 builder: (context, index, _) {
                   return Text(
-                    '$index',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    index,
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.bold),
                   );
                 },
               ),
@@ -219,8 +220,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 valueListenable: progressPercentNotifier,
                 builder: (context, index, _) {
                   return Text(
-                    '$index',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    index,
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.bold),
                   );
                 },
               ),
@@ -235,7 +237,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     return LinearProgressIndicator(
                       value: index == 0.0 ? null : index,
                       backgroundColor: Colors.grey,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                      valueColor:
+                          const AlwaysStoppedAnimation<Color>(Colors.black),
                     );
                   },
                 ),
@@ -248,8 +251,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
                   }
                   _dismiss();
                 },
-                padding: EdgeInsets.all(6),
-                constraints: BoxConstraints(),
+                padding: const EdgeInsets.all(6),
+                constraints: const BoxConstraints(),
                 icon: const Icon(Icons.clear_rounded),
               ),
             ],
@@ -275,7 +278,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                       14,
                     ),
                   ),
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                     left: 20,
                     right: 20,
                     top: 12,
@@ -301,8 +304,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
   }
 
   _downloadApp() async {
-    if (widget.controller != null)
+    if (widget.controller != null) {
       widget.controller!.setValue(UpdateStatus.Pending);
+    }
 
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;
@@ -323,10 +327,11 @@ class _UpdateDialogState extends State<UpdateDialog> {
           }
 
           //Update Controller
-          if (widget.controller != null)
+          if (widget.controller != null) {
             widget.controller!.setProgress(progress + 0, totalProgress + 0);
+          }
 
-          //Update progress bar
+          //Update progress bar value
           if (!_goBackground || !isDisposed) {
             var percent = progress * 100 / totalProgress;
             progressNotifier.value = progress / totalProgress;
@@ -342,7 +347,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
             //Dismiss the dialog
             if (!_goBackground) _dismiss();
 
-            //Open the downloaded update file
+            //Open the downloaded apk file
             OpenFile.open('$tempPath/app.apk');
           }
         },
@@ -363,9 +368,10 @@ class _UpdateDialogState extends State<UpdateDialog> {
     if (widget.controller != null) {
       widget.controller!.setValue(updateStatus);
 
-      if (e != null)
+      if (e != null) {
         widget.controller!
             .setError(token.isCancelled ? 'Download Cancelled \n$e' : e);
+      }
     }
   }
 
