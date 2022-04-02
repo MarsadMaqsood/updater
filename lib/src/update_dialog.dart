@@ -47,12 +47,12 @@ class _UpdateDialogState extends State<UpdateDialog> {
   bool _changeDialog = false;
   var token = CancelToken();
   bool _goBackground = false;
-  bool isDisposed = false;
+  bool _isDisposed = false;
   bool _isUpdated = false;
 
   @override
   void dispose() {
-    isDisposed = true;
+    _isDisposed = true;
     progressNotifier.dispose();
     progressPercentNotifier.dispose();
     progressSizeNotifier.dispose();
@@ -332,7 +332,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
           }
 
           //Update progress bar value
-          if (!_goBackground || !isDisposed) {
+          if (!_goBackground || !_isDisposed) {
             var percent = progress * 100 / totalProgress;
             progressNotifier.value = progress / totalProgress;
             progressPercentNotifier.value = '${percent.toStringAsFixed(2)} %';
