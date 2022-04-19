@@ -212,7 +212,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
                   return Text(
                     index,
                     style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.bold),
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold),
                   );
                 },
               ),
@@ -222,7 +224,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
                   return Text(
                     index,
                     style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.bold),
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold),
                   );
                 },
               ),
