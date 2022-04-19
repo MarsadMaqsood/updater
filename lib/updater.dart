@@ -86,13 +86,13 @@ class Updater {
   /// `onChecked` will return true or false based on update available or not
   final UpdaterController? controller;
 
-  ///Add elevation to dialog
+  ///Add elevation to dialog.
   final double? elevation;
 
-  ///This will add delay when checking for an update
+  ///This will add delay when checking for an update.
   final Duration? delay;
 
-  /// Will return true/false from check() if an update is available
+  /// Will return true/false from `check()` if an update is available.
   bool updateAvailable = false;
 
   ///Function to check for update
