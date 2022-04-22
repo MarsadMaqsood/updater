@@ -25,6 +25,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  dynamic version;
+
   UpdaterController controller = UpdaterController(
     listener: (UpdateStatus status) {
       print('Listener: $status');
@@ -50,13 +52,29 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: Center(
-          child: TextButton(
-            onPressed: () {
-              checkUpdate();
-            },
-            child: const Text('Check For Update'),
-          ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: TextButton(
+                onPressed: () async {
+                  VersionModel model = await getAppVersion();
+                  setState(() {
+                    version = '${model.version}.${model.buildNumber}';
+                  });
+                },
+                child: Text(version ?? 'Get App Version'),
+              ),
+            ),
+            Center(
+              child: TextButton(
+                onPressed: () {
+                  checkUpdate();
+                },
+                child: const Text('Check For Update'),
+              ),
+            ),
+          ],
         ),
       ),
     );

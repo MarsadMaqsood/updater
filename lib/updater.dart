@@ -95,15 +95,6 @@ class Updater {
   /// Will return true/false from `check()` if an update is available.
   bool updateAvailable = false;
 
-  //Return current version of the app
-  Future<String> getAppVersion() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    String buildNumber = packageInfo.buildNumber;
-    String version = packageInfo.version;
-
-    return '$version.$buildNumber';
-  }
-
   ///Function to check for update
   Future<bool> check() async {
     if (delay != null) await Future.delayed(delay!);
@@ -194,4 +185,22 @@ class Updater {
       controller!.setAvailability(value);
     }
   }
+}
+
+///Return current version of the app
+///
+///[VersionModel]
+Future<VersionModel> getAppVersion() async {
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  String version = packageInfo.version;
+  String buildNumber = packageInfo.buildNumber;
+
+  return VersionModel(version, buildNumber);
+}
+
+class VersionModel {
+  String version;
+  String buildNumber;
+
+  VersionModel(this.version, this.buildNumber);
 }
