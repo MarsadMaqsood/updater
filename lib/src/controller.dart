@@ -26,23 +26,23 @@ class UpdaterController extends ChangeNotifier {
   ///[UpdateStatus.Cancelled] when an update is downloading and canceled
   ///
   ///[UpdateStatus.Failed] when there is an error that stoped the update to download
-  Function(UpdateStatus status)? listener;
+  void Function(UpdateStatus status)? listener;
 
   ///Return true/false based on update available or not
-  Function(bool isAvailable)? onChecked;
+  void Function(bool isAvailable)? onChecked;
 
   ///Retrun download progress
-  Function(int current, int total)? progress;
+  void Function(int current, int total)? progress;
 
   ///Return error
-  Function(Object status)? onError;
+  void Function(Object status)? onError;
 
-  setValue(UpdateStatus _status) {
+  void setValue(UpdateStatus _status) {
     if (listener != null) listener!(_status);
     notifyListeners();
   }
 
-  setAvailability(bool _isAvailable) {
+  void setAvailability(bool _isAvailable) {
     if (onChecked != null) {
       onChecked!(_isAvailable);
 
