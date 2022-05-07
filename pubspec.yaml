@@ -29,4 +29,6 @@ flutter:
       android:
         package: com.marsad.updater
         pluginClass: UpdaterPlugin
+      ios:
+        pluginClass: UpdaterPlugin
   
