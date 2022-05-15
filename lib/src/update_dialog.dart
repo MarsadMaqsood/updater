@@ -36,7 +36,7 @@ class UpdateDialog extends StatefulWidget {
   final UpdaterController? controller;
 
   @override
-  _UpdateDialogState createState() => _UpdateDialogState();
+  State<UpdateDialog> createState() => _UpdateDialogState();
 }
 
 class _UpdateDialogState extends State<UpdateDialog> {
@@ -89,6 +89,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
               ),
             ),
           Container(
+            alignment: Alignment.center,
             child: Text(
               widget.titleText,
               textAlign: TextAlign.center,
@@ -98,13 +99,13 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            alignment: Alignment.center,
           ),
           const SizedBox(
             height: 8,
           ),
           // widget.content,
           Container(
+            alignment: Alignment.center,
             child: Text(
               widget.contentText,
               textAlign: TextAlign.center,
@@ -112,7 +113,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 color: Colors.black,
               ),
             ),
-            alignment: Alignment.center,
           ),
           const SizedBox(
             height: 18,
@@ -383,8 +383,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
     if (bytes <= 0) return "0 B";
     const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
     var i = (log(bytes) / log(1024)).floor();
-    return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) +
-        ' ' +
-        suffixes[i];
+    return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
   }
 }
