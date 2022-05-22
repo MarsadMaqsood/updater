@@ -187,7 +187,7 @@ class Updater {
   }
 }
 
-///Return current version of the app
+///Return the current version of the app
 ///
 ///[VersionModel]
 Future<VersionModel> getAppVersion() async {

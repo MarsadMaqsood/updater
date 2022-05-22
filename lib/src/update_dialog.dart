@@ -250,10 +250,10 @@ class _UpdateDialogState extends State<UpdateDialog> {
               IconButton(
                 onPressed: () {
                   token.cancel();
-                  if (widget.controller != null) {
-                    widget.controller!.setValue(UpdateStatus.Cancelled);
-                  }
-                  _dismiss();
+                  // if (widget.controller != null) {
+                  //   widget.controller!.setValue(UpdateStatus.Cancelled);
+                  // }
+                  // _dismiss();
                 },
                 padding: const EdgeInsets.all(6),
                 constraints: const BoxConstraints(),
@@ -312,6 +312,12 @@ class _UpdateDialogState extends State<UpdateDialog> {
       widget.controller!.setValue(UpdateStatus.Pending);
     }
 
+    widget.controller?.addListener(() {
+      if (widget.controller!.isCanceled.value) {
+        token.cancel();
+      }
+    });
+
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;
 
@@ -364,7 +370,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
         _updateController(UpdateStatus.Failed, e);
       }
 
-      print('Download canceled');
+      _dismiss();
+
+      debugPrint('Download canceled');
     }
   }
 

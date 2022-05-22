@@ -37,6 +37,14 @@ class UpdaterController extends ChangeNotifier {
   ///Return error
   void Function(Object status)? onError;
 
+  ///Cancel the current download
+  ValueNotifier isCanceled = ValueNotifier(false);
+
+  void cancel() {
+    isCanceled.value = true;
+    notifyListeners();
+  }
+
   void setValue(UpdateStatus status) {
     if (listener != null) listener!(status);
     notifyListeners();
@@ -65,6 +73,7 @@ class UpdaterController extends ChangeNotifier {
     listener = null;
     progress = null;
     onError = null;
+    isCanceled.dispose();
     super.dispose();
   }
 }

@@ -27,20 +27,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   dynamic version;
 
-  UpdaterController controller = UpdaterController(
-    listener: (UpdateStatus status) {
-      print('Listener: $status');
-    },
-    onChecked: (bool isAvailable) {
-      print(isAvailable);
-    },
-    progress: (current, total) {
-      print('Progress: $current -- $total');
-    },
-    onError: (status) {
-      print('Error: $status');
-    },
-  );
+  late UpdaterController controller;
 
   @override
   void dispose() {
@@ -50,6 +37,20 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    controller = UpdaterController(
+      listener: (UpdateStatus status) {
+        debugPrint('Listener: $status');
+      },
+      onChecked: (bool isAvailable) {
+        debugPrint('$isAvailable');
+      },
+      progress: (current, total) {
+        debugPrint('Progress: $current -- $total');
+      },
+      onError: (status) {
+        debugPrint('Error: $status');
+      },
+    );
     return MaterialApp(
       home: Scaffold(
         body: Column(
@@ -96,6 +97,11 @@ class _MyAppState extends State<MyApp> {
       controller: controller,
     ).check();
 
-    print(isAvailable);
+    debugPrint('$isAvailable');
+
+    ///e.g: Cancel downloading after 5 secounds of downloading
+    Future.delayed(const Duration(seconds: 5), () {
+      controller.cancel();
+    });
   }
 }

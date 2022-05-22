@@ -5,13 +5,19 @@ A package to check for the custom in-app updates for Flutter.
 ## ⭐ Installing
 ```
 dependencies:
-    updater: ^0.1.1
+    updater: ^0.1.2
 ```
 
 ## ⚡ Import 
 ```
 import 'package:updater/updater.dart';
 ```
+
+
+|  | Android | IOS |
+| --- | --- | --- |
+| Supported | ✔️ |  ❌
+
 
 <img src="https://raw.githubusercontent.com/MarsadMaqsood/AppUpdate/master/assets/image.gif" alt="alt text" width="300" height="620">
 
@@ -97,6 +103,9 @@ version: 0.0.3+1  #Like here the VersionCode is 1
             print('Error: $status');
         },
     );
+
+    //To cancel the download
+    //controller.cancel();
 
     Updater(
         context: context,
