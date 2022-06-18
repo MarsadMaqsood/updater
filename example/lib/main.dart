@@ -88,12 +88,16 @@ class _MyAppState extends State<MyApp> {
       url: 'https://codingwithmarsad.web.app/updater.json',
       titleText: 'Stay with time',
       // backgroundDownload: false,
-      // allowSkip: false,
+      allowSkip: true,
       contentText:
           'Update your app to the latest version to enjoy new feature.',
-      // allowSkip: false,
+
       callBack:
-          (versionName, versionCode, contentText, minSupport, downloadUrl) {},
+          (versionName, versionCode, contentText, minSupport, downloadUrl) {
+        debugPrint(versionName);
+        debugPrint(versionCode.toString());
+        debugPrint(contentText);
+      },
       controller: controller,
     ).check();
 

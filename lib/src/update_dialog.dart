@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:updater/src/enums.dart';
 import 'package:updater/src/controller.dart';
+import 'package:updater/utils/constants.dart';
 
 class UpdateDialog extends StatefulWidget {
   const UpdateDialog({
@@ -326,6 +326,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
         widget.downloadUrl,
         '$tempPath/app.apk',
         cancelToken: token,
+        deleteOnError: true,
         options: Options(
           receiveDataWhenStatusError: false,
         ),
@@ -348,7 +349,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
             progressPercentNotifier.value = '${percent.toStringAsFixed(2)} %';
 
             progressSizeNotifier.value =
-                '${_formatBytes(progress, 1)} / ${_formatBytes(totalProgress, 1)}';
+                '${formatBytes(progress, 1)} / ${formatBytes(totalProgress, 1)}';
           }
           if (progress == totalProgress) {
             //Update Controller
@@ -361,7 +362,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
             OpenFile.open('$tempPath/app.apk');
           }
         },
-        deleteOnError: true,
       );
     } catch (e) {
       if (e is DioError) {
@@ -385,12 +385,5 @@ class _UpdateDialogState extends State<UpdateDialog> {
             .setError(token.isCancelled ? 'Download Cancelled \n$e' : e);
       }
     }
-  }
-
-  String _formatBytes(int bytes, int decimals) {
-    if (bytes <= 0) return "0 B";
-    const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-    var i = (log(bytes) / log(1024)).floor();
-    return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${suffixes[i]}';
   }
 }
