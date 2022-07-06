@@ -22,4 +22,10 @@ enum UpdateStatus {
 
   ///when there is an error that stoped the update to download
   Failed,
+
+  ///Update download paused
+  Paused,
+
+  ///Update download resume
+  Resume,
 }

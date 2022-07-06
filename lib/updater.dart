@@ -2,6 +2,7 @@ library updater;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
@@ -97,6 +98,8 @@ class Updater {
 
   ///Function to check for update
   Future<bool> check() async {
+    if (!Platform.isAndroid) return false;
+
     if (delay != null) await Future.delayed(delay!);
 
     _updateController(UpdateStatus.Checking);
@@ -147,6 +150,18 @@ class Updater {
     }
     _updateAvailable(false);
     return false; // no update is available
+  }
+
+  void _resume() {
+    if (controller != null) {
+      controller!.setValue(UpdateStatus.Resume);
+    }
+  }
+
+  void _pause() {
+    if (controller != null) {
+      controller!.setValue(UpdateStatus.Paused);
+    }
   }
 
   late String _downloadUrl;

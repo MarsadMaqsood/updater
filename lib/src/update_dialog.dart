@@ -68,11 +68,11 @@ class _UpdateDialogState extends State<UpdateDialog> {
       ),
       elevation: widget.elevation,
       backgroundColor: Colors.white,
-      child: _changeDialog ? _downloadContent() : _updateContent(),
+      child: _changeDialog ? _downloadContentWidget() : _updateContentWidget(),
     );
   }
 
-  Widget _updateContent() {
+  Widget _updateContentWidget() {
     return Padding(
       padding: const EdgeInsets.all(14.0),
       child: Column(
@@ -125,7 +125,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                   setState(() {
                     _changeDialog = true;
                   });
-                  _downloadApp();
+                  _startDownload();
                 },
                 borderRadius: BorderRadius.circular(14),
                 child: Container(
@@ -185,7 +185,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
     );
   }
 
-  Widget _downloadContent() {
+  Widget _downloadContentWidget() {
     return Padding(
       padding: const EdgeInsets.all(14.0),
       child: Column(
@@ -307,7 +307,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
     Navigator.of(context, rootNavigator: widget.rootNavigator).pop();
   }
 
-  _downloadApp() async {
+  _startDownload() async {
     if (widget.controller != null) {
       widget.controller!.setValue(UpdateStatus.Pending);
     }

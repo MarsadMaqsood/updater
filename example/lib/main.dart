@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   checkUpdate() async {
-    bool isAvailable = await Updater(
+    Updater updater = Updater(
       context: context,
       delay: const Duration(milliseconds: 300),
       url: 'https://codingwithmarsad.web.app/updater.json',
@@ -99,13 +99,14 @@ class _MyAppState extends State<MyApp> {
         debugPrint(contentText);
       },
       controller: controller,
-    ).check();
+    );
+    bool isAvailable = await updater.check();
 
     debugPrint('$isAvailable');
 
-    ///e.g: Cancel downloading after 5 secounds of downloading
+    // ///e.g: Cancel downloading after 5 secounds of downloading
     Future.delayed(const Duration(seconds: 5), () {
-      controller.cancel();
+      // controller.cancel();
     });
   }
 }
