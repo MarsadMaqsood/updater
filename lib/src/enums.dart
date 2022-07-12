@@ -28,4 +28,14 @@ enum UpdateStatus {
 
   ///Update download resume
   Resume,
+
+  none,
+}
+
+enum DownloadStatus {
+  isDownloading,
+  isPaused,
+  isCanceled,
+  isResumed,
+  none,
 }

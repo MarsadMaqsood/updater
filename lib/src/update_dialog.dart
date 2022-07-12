@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:updater/src/download_core.dart';
 import 'package:updater/src/enums.dart';
 import 'package:updater/src/controller.dart';
 import 'package:updater/utils/constants.dart';
@@ -21,6 +22,8 @@ class UpdateDialog extends StatefulWidget {
     this.confirmText,
     this.cancelText,
     required this.elevation,
+    // required this.token,
+    this.status = UpdateStatus.Dowloading,
   }) : super(key: key);
 
   final BuildContext context;
@@ -34,6 +37,8 @@ class UpdateDialog extends StatefulWidget {
   final bool backgroundDownload;
   final double elevation;
   final UpdaterController? controller;
+  // final CancelToken token;
+  final UpdateStatus status;
 
   @override
   State<UpdateDialog> createState() => _UpdateDialogState();
@@ -49,14 +54,36 @@ class _UpdateDialogState extends State<UpdateDialog> {
   bool _goBackground = false;
   bool _isDisposed = false;
   bool _isUpdated = false;
+  late DownloadCore core;
+  late UpdateStatus status;
+
+  @override
+  void initState() {
+    super.initState();
+
+    status = widget.status;
+
+    core = DownloadCore(
+      url: widget.downloadUrl,
+      token: token,
+      progressNotifier: progressNotifier,
+      progressPercentNotifier: progressPercentNotifier,
+      progressSizeNotifier: progressSizeNotifier,
+      controller: widget.controller,
+      dismiss: _dismiss,
+    );
+    if (widget.status == UpdateStatus.Paused) {
+      core.lastStatus();
+    }
+  }
 
   @override
   void dispose() {
     _isDisposed = true;
+    core.dispose();
     progressNotifier.dispose();
     progressPercentNotifier.dispose();
     progressSizeNotifier.dispose();
-
     super.dispose();
   }
 
@@ -68,7 +95,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
       ),
       elevation: widget.elevation,
       backgroundColor: Colors.white,
-      child: _changeDialog ? _downloadContentWidget() : _updateContentWidget(),
+      child: _changeDialog || status == UpdateStatus.Paused
+          ? _downloadContentWidget()
+          : _updateContentWidget(),
     );
   }
 
@@ -125,7 +154,11 @@ class _UpdateDialogState extends State<UpdateDialog> {
                   setState(() {
                     _changeDialog = true;
                   });
-                  _startDownload();
+                  status = UpdateStatus.Dowloading;
+
+                  core.startDownload();
+
+                  // _startDownload();
                 },
                 borderRadius: BorderRadius.circular(14),
                 child: Container(
@@ -249,15 +282,30 @@ class _UpdateDialogState extends State<UpdateDialog> {
               ),
               IconButton(
                 onPressed: () {
-                  token.cancel();
-                  // if (widget.controller != null) {
-                  //   widget.controller!.setValue(UpdateStatus.Cancelled);
-                  // }
+                  if (status == UpdateStatus.Resume) {
+                    _updateStatus(UpdateStatus.Paused);
+                  } else if (status == UpdateStatus.Paused) {
+                    _updateStatus(UpdateStatus.Resume);
+                  } else if (status == UpdateStatus.Dowloading) {
+                    _updateStatus(UpdateStatus.Cancelled);
+                  }
+
+                  if (status == UpdateStatus.Resume) {
+                    core.resume();
+                  } else {
+                    // token.cancel();
+                    core.pause();
+                  }
+
                   // _dismiss();
                 },
                 padding: const EdgeInsets.all(6),
                 constraints: const BoxConstraints(),
-                icon: const Icon(Icons.clear_rounded),
+                icon: Icon(status == UpdateStatus.Dowloading
+                    ? Icons.clear_rounded
+                    : status == UpdateStatus.Resume
+                        ? Icons.pause_rounded
+                        : Icons.play_arrow_rounded),
               ),
             ],
           ),
@@ -307,16 +355,36 @@ class _UpdateDialogState extends State<UpdateDialog> {
     Navigator.of(context, rootNavigator: widget.rootNavigator).pop();
   }
 
+  listenUpdate() {
+    widget.controller?.addListener(() {
+      // if (widget.controller!.isCanceled.value) {
+      //   // token.cancel();
+      //   core.pause();
+      // }
+      if (widget.controller!.status == DownloadStatus.isResumed) {
+        widget.controller!.status == DownloadStatus.none;
+        core.resume();
+      }
+
+      if (widget.controller!.status == DownloadStatus.isPaused ||
+          widget.controller!.status == DownloadStatus.isCanceled) {
+        widget.controller!.status == DownloadStatus.none;
+        core.pause();
+      }
+    });
+  }
+
   _startDownload() async {
+    if (widget.status == UpdateStatus.Resume) {
+      core.checkSize();
+      return;
+    }
+
     if (widget.controller != null) {
       widget.controller!.setValue(UpdateStatus.Pending);
     }
 
-    widget.controller?.addListener(() {
-      if (widget.controller!.isCanceled.value) {
-        token.cancel();
-      }
-    });
+    // listenUpdate();
 
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;
@@ -384,6 +452,17 @@ class _UpdateDialogState extends State<UpdateDialog> {
         widget.controller!
             .setError(token.isCancelled ? 'Download Cancelled \n$e' : e);
       }
+    }
+  }
+
+  void _updateStatus(UpdateStatus newStatus) {
+    setState(() {
+      status = newStatus;
+      if (!_changeDialog) _changeDialog = true;
+    });
+
+    if (widget.controller != null) {
+      widget.controller!.setValue(newStatus);
     }
   }
 }

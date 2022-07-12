@@ -2,63 +2,169 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:updater/updater.dart';
+import 'package:updater/utils/constants.dart';
 
 class DownloadCore {
   final CancelToken token;
+  final ValueNotifier<double> progressNotifier;
+  final ValueNotifier<String> progressPercentNotifier, progressSizeNotifier;
+  final String url;
+  final UpdaterController? controller;
+  final Function dismiss;
 
-  DownloadCore({required this.token});
+  DownloadCore({
+    required this.url,
+    required this.token,
+    required this.progressNotifier,
+    required this.progressPercentNotifier,
+    required this.progressSizeNotifier,
+    this.controller,
+    required this.dismiss,
+  });
 
   final _chars =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
 
-  void startDownload({isResumed = false, index}) async {
-    Directory tempDir = await getTemporaryDirectory();
-    String tempPath = '${tempDir.path}/Updates/';
+  bool _isUpdated = false;
+  bool _goBackground = false, _isDisposed = false;
 
+  void startDownload({isResumed = false}) async {
     var testURL =
         'https://firebasestorage.googleapis.com/v0/b/studyproject-242f6.appspot.com/o/Updates%2Fapp-release.apk?alt=media&token=1bb9b6a9-56de-4469-ac5e-1c4494717e36';
 
-    List<FileSystemEntity> listEntity = tempDir.listSync();
+    Directory tempDirectory = await directory();
+
+    List<FileSystemEntity> listEntity = tempDirectory.listSync();
 
     int length = 0;
+    String totalLength = await checkSize();
 
-    for (FileSystemEntity entity in listEntity) {
-      File file = File(entity.path);
-      length = await file.length();
-      if (!isResumed) {
+    if (totalLength.isNotEmpty) {
+      totalLength = '${int.parse(totalLength) - 1}';
+    }
+
+    if (!isResumed) {
+      for (FileSystemEntity entity in listEntity) {
+        File file = File(entity.path);
         file.deleteSync();
       }
     }
 
-    String fileName = '$tempPath/app${index ??= _getRandomString(10)}.apk';
+    listEntity = tempDirectory.listSync();
 
-    var response = await Dio().download(
+    for (FileSystemEntity entity in listEntity) {
+      File file = File(entity.path);
+      length = length + file.lengthSync();
+    }
+
+    int index = 0;
+
+    if (listEntity.isNotEmpty) {
+      index =
+          int.tryParse(listEntity.last.path.split('-').last.split('.').first) ??
+              0;
+    }
+
+    String fileName =
+        '${tempDirectory.path}/app${_getRandomString(10)}-${index + 1}.apk';
+
+    await Dio().download(
       testURL,
       fileName,
       cancelToken: token,
-      onReceiveProgress: (c, t) {
-        print('$c ===  $t');
+      onReceiveProgress: (progress, totalProgress) {
+        // print('$progress ===  $totalProgress');
 
-        if (c == t) {
-          OpenFile.open(fileName);
-          return;
+        if (!_isUpdated) {
+          //Update Controller
+          _updateController(UpdateStatus.Dowloading);
+          _isUpdated = true;
         }
-        if (c == t && isResumed) {
-          _mergeFiles(tempPath);
+
+        //Update Controller
+        if (controller != null) {
+          controller!.setProgress(progress + length, totalProgress + length);
+        }
+
+        //Update progress bar value
+        if (!_goBackground || !_isDisposed) {
+          var percent = progress * 100 / totalProgress;
+          progressNotifier.value = progress / totalProgress;
+          progressPercentNotifier.value = '${percent.toStringAsFixed(2)} %';
+
+          progressSizeNotifier.value =
+              '${formatBytes(progress + length, 1)} / ${formatBytes(totalProgress, 1)}';
+        }
+        if (progress == totalProgress) {
+          //Update Controller
+          _updateController(UpdateStatus.Completed);
+
+          //Dismiss the dialog
+          if (!_goBackground) dismiss.call();
+
+          //Open the downloaded apk file
+          OpenFile.open('${tempDirectory.path}/app.apk');
+        }
+
+        if (progress == totalProgress && isResumed) {
+          _mergeFiles(tempDirectory.path);
+        }
+        if (progress > totalProgress) {
+          token.cancel();
+          throw Exception(
+              'progress > totalProgress. Please start download instead of resume');
         }
       },
       options: isResumed
           ? Options(
               headers: {
-                'range': 'bytes=$length-${24390046 - 1}',
+                'range': 'bytes=$length-$totalLength',
               },
               responseType: ResponseType.stream,
             )
           : Options(),
       deleteOnError: false,
     );
+  }
+
+  void lastStatus() async {
+    Directory tempDirectory = await directory();
+    List<FileSystemEntity> listEntity = tempDirectory.listSync();
+
+    int length = 0;
+
+    for (FileSystemEntity entity in listEntity) {
+      length = length + File(entity.path).lengthSync();
+    }
+
+    String totalLength = await checkSize();
+
+    var percent = length * 100 / int.parse(totalLength);
+    progressNotifier.value = length / int.parse(totalLength);
+    progressPercentNotifier.value = '${percent.toStringAsFixed(2)} %';
+
+    progressSizeNotifier.value =
+        '${formatBytes(length, 1)} / ${formatBytes(int.parse(totalLength), 1)}';
+  }
+
+  dispose() {
+    _goBackground = true;
+    _isDisposed = true;
+  }
+
+  _updateController(UpdateStatus updateStatus, [e]) {
+    if (controller != null) {
+      controller!.setValue(updateStatus);
+
+      if (e != null) {
+        controller!.setError(token.isCancelled ? 'Download Cancelled \n$e' : e);
+      }
+    }
   }
 
   void _mergeFiles(tempPath) async {
@@ -74,7 +180,7 @@ class DownloadCore {
     dynamic bytes;
 
     for (FileSystemEntity entity in listEntity) {
-      bytes = await bytes + File(entity.path).readAsBytes();
+      bytes = bytes + File(entity.path).readAsBytesSync();
     }
 
     await file.writeAsBytes(bytes);
@@ -87,7 +193,18 @@ class DownloadCore {
   }
 
   void resume() {
-    startDownload(isResumed: true, index: _getRandomString(10));
+    startDownload(isResumed: true);
+  }
+
+  Future<Directory> directory() async {
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = '${tempDir.path}/Updates/';
+    return Directory(tempPath);
+  }
+
+  Future<String> checkSize() async {
+    Response response = await Dio().head(url);
+    return (response.headers.value(Headers.contentLengthHeader)) ?? '';
   }
 
   String _getRandomString(int length) => String.fromCharCodes(Iterable.generate(

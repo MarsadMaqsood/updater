@@ -6,12 +6,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:updater/model/update_model.dart';
 import 'package:updater/src/enums.dart';
 import 'package:updater/src/update_dialog.dart';
 import 'package:updater/src/controller.dart';
 
 export 'src/enums.dart';
 export 'src/controller.dart';
+export 'model/update_model.dart';
 
 class Updater {
   Updater({
@@ -73,8 +75,10 @@ class Updater {
   ///
   ///}
   ///```
-  Function(String versionName, int versionCode, String contentText,
-      int minSupport, String downloadUrl)? callBack;
+  Function(UpdateModel)? callBack;
+
+  // Function(String versionName, int versionCode, String contentText,
+  //     int minSupport, String downloadUrl)? callBack;
 
   ///UpdaterController to handle callbacks
   ///
@@ -97,7 +101,7 @@ class Updater {
   bool updateAvailable = false;
 
   ///Function to check for update
-  Future<bool> check() async {
+  Future<bool> check({withDialog = true}) async {
     if (!Platform.isAndroid) return false;
 
     if (delay != null) await Future.delayed(delay!);
@@ -108,43 +112,53 @@ class Updater {
 
     var data = jsonDecode(response.body);
 
-    String contentTxt = data['contentText'];
-    int versionCodeNew = data['versionCode'];
-    String downloadUrl = data['url'];
-    int minSupportVersion = data['minSupport'];
+    UpdateModel model = UpdateModel(
+      data['url'],
+      data['versionName'],
+      data['versionCode'],
+      data['minSupport'],
+      data['contentText'],
+    );
+
+    // String contentTxt = data['contentText'];
+    // int versionCodeNew = data['versionCode'];
+    // String downloadUrl = data['url'];
+    // int minSupportVersion = data['minSupport'];
 
     if (callBack != null) {
-      callBack!(data['versionName'], versionCodeNew, contentTxt,
-          minSupportVersion, downloadUrl);
+      callBack!(model);
+      // callBack!(data['versionName'], versionCodeNew, contentTxt,
+      //     minSupportVersion, downloadUrl);
     }
 
     if (contentText == '') {
-      contentText = contentTxt;
+      contentText = model.contentText;
     }
 
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     int buildNumber = int.parse(packageInfo.buildNumber);
 
-    if (minSupportVersion >= buildNumber) {
+    if (model.minSupport >= buildNumber) {
       allowSkip = false;
     }
 
-    if (buildNumber < versionCodeNew && downloadUrl.contains('http')) {
+    if (buildNumber < model.versionCode && model.downloadUrl.contains('http')) {
       _updateAvailable(true);
       _updateController(UpdateStatus.Available);
 
-      _downloadUrl = downloadUrl;
-
-      showDialog(
-          context: context,
-          barrierDismissible: allowSkip,
-          builder: (_) {
-            return _buildDialog;
-          }).then((value) {
-        if (value == null) {
-          _updateController(UpdateStatus.DialogDismissed);
-        }
-      });
+      _downloadUrl = model.downloadUrl;
+      if (withDialog) {
+        showDialog(
+            context: context,
+            barrierDismissible: allowSkip,
+            builder: (_) {
+              return _buildDialog;
+            }).then((value) {
+          if (value == null) {
+            _updateController(UpdateStatus.DialogDismissed);
+          }
+        });
+      }
 
       return true; // update is available
     }
@@ -152,19 +166,43 @@ class Updater {
     return false; // no update is available
   }
 
-  void _resume() {
+  Future<bool> resume() async {
     if (controller != null) {
       controller!.setValue(UpdateStatus.Resume);
     }
+
+    if (_downloadUrl.isEmpty) {
+      await check(withDialog: false);
+    }
+
+    status = UpdateStatus.Paused;
+
+    showDialog(
+        context: context,
+        barrierDismissible: allowSkip,
+        builder: (_) {
+          return _buildDialog;
+        }).then((value) {
+      if (value == null) {
+        status = UpdateStatus.none;
+        _updateController(UpdateStatus.DialogDismissed);
+      }
+    });
+
+    return true;
   }
 
-  void _pause() {
+  void pause() {
     if (controller != null) {
       controller!.setValue(UpdateStatus.Paused);
     }
   }
 
-  late String _downloadUrl;
+  String _downloadUrl = '';
+  UpdateStatus status = UpdateStatus.none;
+
+  // ///Cancel token for canceling [Dio] download.
+  // final CancelToken _token = CancelToken();
 
   Widget get _buildDialog =>
       WillPopScope(onWillPop: _onWillPop, child: _buildDialogUI());
@@ -186,6 +224,7 @@ class Updater {
       downloadUrl: _downloadUrl,
       backgroundDownload: backgroundDownload!,
       elevation: elevation ?? 0,
+      status: status,
     );
   }
 

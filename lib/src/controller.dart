@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:updater/src/core.dart';
 import 'package:updater/src/enums.dart';
 
-class UpdaterController extends ChangeNotifier {
+class UpdaterController extends ChangeNotifier with Download {
   UpdaterController({
     this.listener,
     this.onChecked,
@@ -32,16 +33,35 @@ class UpdaterController extends ChangeNotifier {
   void Function(bool isAvailable)? onChecked;
 
   ///Retrun download progress
+  ///
+  ///
+  ///```
+  /// progress: (int current, int total) {
+  ///   debugPrint('Progress: $current -- $total');
+  /// },
+  ///
+  ///```
   void Function(int current, int total)? progress;
 
   ///Return error
   void Function(Object status)? onError;
 
   ///Cancel the current download
-  ValueNotifier isCanceled = ValueNotifier(false);
+  // ValueNotifier isCanceled = ValueNotifier(false);
 
   void cancel() {
-    isCanceled.value = true;
+    // isCanceled.value = true;
+    status = DownloadStatus.isCanceled;
+    notifyListeners();
+  }
+
+  void pause() {
+    status = DownloadStatus.isPaused;
+    notifyListeners();
+  }
+
+  void resume() {
+    status = DownloadStatus.isResumed;
     notifyListeners();
   }
 
@@ -73,7 +93,6 @@ class UpdaterController extends ChangeNotifier {
     listener = null;
     progress = null;
     onError = null;
-    isCanceled.dispose();
     super.dispose();
   }
 }

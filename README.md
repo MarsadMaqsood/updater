@@ -5,7 +5,7 @@ A package to check for the custom in-app updates for Flutter.
 ## ⭐ Installing
 ```
 dependencies:
-    updater: ^0.1.2
+    updater: ^0.1.4-experimental
 ```
 
 ## ⚡ Import 
@@ -107,7 +107,7 @@ version: 0.0.3+1  #Like here the VersionCode is 1
     //To cancel the download
     //controller.cancel();
 
-    Updater(
+    Updater updater = Updater(
         context: context,
         url: 'JSON_FILE_URL',
         titleText: 'Update available',
@@ -121,5 +121,14 @@ version: 0.0.3+1  #Like here the VersionCode is 1
               '$verName - $verCode - $contentText - $minSupport - $downloadUrl');
         },
         controller: controller,
-    ).check();
+    );
+    updater.check();
+    
+    updater.resume();
+    
+    updater.pause();
+    
 ```
+
+
+
