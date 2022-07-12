@@ -34,8 +34,8 @@ class DownloadCore {
   bool _goBackground = false, _isDisposed = false;
 
   void startDownload({isResumed = false}) async {
-    var testURL =
-        'https://firebasestorage.googleapis.com/v0/b/studyproject-242f6.appspot.com/o/Updates%2Fapp-release.apk?alt=media&token=1bb9b6a9-56de-4469-ac5e-1c4494717e36';
+    // var testURL =
+    //     'https://firebasestorage.googleapis.com/v0/b/studyproject-242f6.appspot.com/o/Updates%2Fapp-release.apk?alt=media&token=1bb9b6a9-56de-4469-ac5e-1c4494717e36';
 
     Directory tempDirectory = await directory();
 
@@ -74,7 +74,7 @@ class DownloadCore {
         '${tempDirectory.path}/app${_getRandomString(10)}-${index + 1}.apk';
 
     await Dio().download(
-      testURL,
+      url,
       fileName,
       cancelToken: token,
       onReceiveProgress: (progress, totalProgress) {
@@ -93,14 +93,14 @@ class DownloadCore {
 
         //Update progress bar value
         if (!_goBackground || !_isDisposed) {
-          var percent = progress * 100 / totalProgress;
-          progressNotifier.value = progress / totalProgress;
+          var percent = (progress + length) * 100 / totalProgress;
+          progressNotifier.value = (progress + length) / totalProgress;
           progressPercentNotifier.value = '${percent.toStringAsFixed(2)} %';
 
           progressSizeNotifier.value =
               '${formatBytes(progress + length, 1)} / ${formatBytes(totalProgress, 1)}';
         }
-        if (progress == totalProgress) {
+        if ((progress + length) == totalProgress) {
           //Update Controller
           _updateController(UpdateStatus.Completed);
 
@@ -116,6 +116,7 @@ class DownloadCore {
         }
         if (progress > totalProgress) {
           token.cancel();
+
           throw Exception(
               'progress > totalProgress. Please start download instead of resume');
         }
@@ -123,6 +124,7 @@ class DownloadCore {
       options: isResumed
           ? Options(
               headers: {
+                // 'range': 'bytes=$length-',
                 'range': 'bytes=$length-$totalLength',
               },
               responseType: ResponseType.stream,
@@ -177,13 +179,14 @@ class DownloadCore {
       file.delete();
     }
 
-    dynamic bytes;
+    List<int> list = [];
 
     for (FileSystemEntity entity in listEntity) {
-      bytes = bytes + File(entity.path).readAsBytesSync();
+      var byte = await File(entity.path).readAsBytes();
+      list.addAll(byte);
     }
 
-    await file.writeAsBytes(bytes);
+    await file.writeAsBytes(list);
 
     OpenFile.open(file.path);
   }
