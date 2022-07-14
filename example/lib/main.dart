@@ -112,6 +112,7 @@ class _MyAppState extends State<MyApp> {
         debugPrint(model.versionCode.toString());
         debugPrint(model.contentText);
       },
+
       controller: controller,
     );
   }
