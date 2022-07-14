@@ -10,7 +10,9 @@ import 'package:updater/model/update_model.dart';
 import 'package:updater/src/enums.dart';
 import 'package:updater/src/update_dialog.dart';
 import 'package:updater/src/controller.dart';
+import 'model/version_model.dart';
 
+export 'model/version_model.dart';
 export 'src/enums.dart';
 export 'src/controller.dart';
 export 'model/update_model.dart';
@@ -51,7 +53,7 @@ class Updater {
   ///Set update dialog title text
   final String? titleText;
 
-  ///Set update dialog content text
+  ///Change update dialog content text
   String? contentText;
 
   ///Set rootNavigator value to dismiss dialog
@@ -67,18 +69,15 @@ class Updater {
   ///`String versionName`, `int versionCode`, `String contentText`, `int minSupport`, `String downloadUrl`
   ///
   ///```dart
-  ///.callback(String versionName,
-  ///     int versionCode,
-  ///     String contentText,
-  ///     int minSupport,
-  ///     String downloadUrl){
-  ///
+  ///.callback(UpdateModel model){
+  ///   // model.versionName;
+  ///   // model.versionCode;
+  ///   // model.contentText;
+  ///   // model.minSupport;
+  ///   // model.downloadUrl;
   ///}
   ///```
   Function(UpdateModel)? callBack;
-
-  // Function(String versionName, int versionCode, String contentText,
-  //     int minSupport, String downloadUrl)? callBack;
 
   ///UpdaterController to handle callbacks
   ///
@@ -97,9 +96,6 @@ class Updater {
   ///This will add delay when checking for an update.
   final Duration? delay;
 
-  /// Will return true/false from `check()` if an update is available.
-  bool updateAvailable = false;
-
   ///Function to check for update
   Future<bool> check({withDialog = true}) async {
     if (!Platform.isAndroid) return false;
@@ -108,9 +104,8 @@ class Updater {
 
     _updateController(UpdateStatus.Checking);
 
-    var response = await http.get(Uri.parse(url));
-
-    var data = jsonDecode(response.body);
+    http.Response response = await http.get(Uri.parse(url));
+    dynamic data = jsonDecode(response.body);
 
     UpdateModel model = UpdateModel(
       data['url'],
@@ -120,15 +115,8 @@ class Updater {
       data['contentText'],
     );
 
-    // String contentTxt = data['contentText'];
-    // int versionCodeNew = data['versionCode'];
-    // String downloadUrl = data['url'];
-    // int minSupportVersion = data['minSupport'];
-
     if (callBack != null) {
       callBack!(model);
-      // callBack!(data['versionName'], versionCodeNew, contentTxt,
-      //     minSupportVersion, downloadUrl);
     }
 
     if (contentText == '') {
@@ -166,6 +154,7 @@ class Updater {
     return false; // no update is available
   }
 
+  ///Function to resume update
   Future<bool> resume() async {
     if (controller != null) {
       controller!.setValue(UpdateStatus.Resume);
@@ -175,7 +164,7 @@ class Updater {
       await check(withDialog: false);
     }
 
-    status = UpdateStatus.Paused;
+    _status = UpdateStatus.Paused;
 
     showDialog(
         context: context,
@@ -184,7 +173,7 @@ class Updater {
           return _buildDialog;
         }).then((value) {
       if (value == null) {
-        status = UpdateStatus.none;
+        _status = UpdateStatus.none;
         _updateController(UpdateStatus.DialogDismissed);
       }
     });
@@ -192,6 +181,7 @@ class Updater {
     return true;
   }
 
+  ///Function to resume update
   void pause() {
     if (controller != null) {
       controller!.setValue(UpdateStatus.Paused);
@@ -199,7 +189,7 @@ class Updater {
   }
 
   String _downloadUrl = '';
-  UpdateStatus status = UpdateStatus.none;
+  UpdateStatus _status = UpdateStatus.none;
 
   // ///Cancel token for canceling [Dio] download.
   // final CancelToken _token = CancelToken();
@@ -224,7 +214,7 @@ class Updater {
       downloadUrl: _downloadUrl,
       backgroundDownload: backgroundDownload!,
       elevation: elevation ?? 0,
-      status: status,
+      status: _status,
     );
   }
 
@@ -234,6 +224,7 @@ class Updater {
     }
   }
 
+  /// Will return true/false from `check()` if an update is available.
   _updateAvailable(bool value) {
     if (controller != null) {
       controller!.setAvailability(value);
@@ -243,18 +234,17 @@ class Updater {
 
 ///Return the current version of the app
 ///
-///[VersionModel]
+///
+///```dart
+/// VersionModel model = await getAppVersion();
+/// print(model.version);
+/// print(model.buildNumber);
+/// ```
+///
 Future<VersionModel> getAppVersion() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   String version = packageInfo.version;
   String buildNumber = packageInfo.buildNumber;
 
   return VersionModel(version, buildNumber);
-}
-
-class VersionModel {
-  String version;
-  String buildNumber;
-
-  VersionModel(this.version, this.buildNumber);
 }

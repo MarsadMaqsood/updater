@@ -1,3 +1,6 @@
+## 0.1.4-experimental
+- Added pause and resume support
+
 ## 0.1.3
 - Minor bug fixes
 

@@ -374,7 +374,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
     });
   }
 
-  _startDownload() async {
+  startDownload() async {
     if (widget.status == UpdateStatus.Resume) {
       core.checkSize();
       return;
