@@ -33,7 +33,7 @@ class DownloadCore {
   bool _isUpdated = false;
   bool _goBackground = false, _isDisposed = false;
 
-  void startDownload({isResumed = false}) async {
+  Future<void> startDownload({isResumed = false}) async {
     // var testURL =
     //     'https://firebasestorage.googleapis.com/v0/b/studyproject-242f6.appspot.com/o/Updates%2Fapp-release.apk?alt=media&token=1bb9b6a9-56de-4469-ac5e-1c4494717e36';
 
@@ -134,7 +134,7 @@ class DownloadCore {
     );
   }
 
-  void lastStatus() async {
+  Future<void> lastStatus() async {
     Directory tempDirectory = await directory();
     List<FileSystemEntity> listEntity = tempDirectory.listSync();
 
@@ -154,12 +154,12 @@ class DownloadCore {
         '${formatBytes(length, 1)} / ${formatBytes(int.parse(totalLength), 1)}';
   }
 
-  dispose() {
+  void dispose() {
     _goBackground = true;
     _isDisposed = true;
   }
 
-  _updateController(UpdateStatus updateStatus, [e]) {
+  void _updateController(UpdateStatus updateStatus, [e]) {
     if (controller != null) {
       controller!.setValue(updateStatus);
 
@@ -169,7 +169,7 @@ class DownloadCore {
     }
   }
 
-  void _mergeFiles(tempPath) async {
+  Future<void> _mergeFiles(tempPath) async {
     Directory tempDir = Directory(tempPath);
 
     List<FileSystemEntity> listEntity = tempDir.listSync();

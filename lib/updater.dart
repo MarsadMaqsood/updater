@@ -1,6 +1,5 @@
 library updater;
 
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -13,7 +12,7 @@ import 'package:updater/src/controller.dart';
 import 'model/version_model.dart';
 
 export 'model/version_model.dart';
-export 'src/enums.dart';
+export 'src/enums.dart' hide DownloadStatus;
 export 'src/controller.dart';
 export 'model/update_model.dart';
 

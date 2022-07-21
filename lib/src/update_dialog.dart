@@ -1,12 +1,8 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:updater/src/download_core.dart';
 import 'package:updater/src/enums.dart';
 import 'package:updater/src/controller.dart';
-import 'package:updater/utils/constants.dart';
 
 class UpdateDialog extends StatefulWidget {
   const UpdateDialog({
@@ -51,9 +47,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
 
   bool _changeDialog = false;
   var token = CancelToken();
-  bool _goBackground = false;
-  bool _isDisposed = false;
-  bool _isUpdated = false;
   late DownloadCore core;
   late UpdateStatus status;
 
@@ -75,11 +68,11 @@ class _UpdateDialogState extends State<UpdateDialog> {
     if (widget.status == UpdateStatus.Paused) {
       core.lastStatus();
     }
+    listenUpdate();
   }
 
   @override
   void dispose() {
-    _isDisposed = true;
     core.dispose();
     progressNotifier.dispose();
     progressPercentNotifier.dispose();
@@ -317,9 +310,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
               alignment: Alignment.bottomRight,
               child: InkWell(
                 onTap: () {
-                  setState(() {
-                    _goBackground = true;
-                  });
                   _dismiss();
                 },
                 borderRadius: BorderRadius.circular(14),
@@ -372,87 +362,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
         core.pause();
       }
     });
-  }
-
-  startDownload() async {
-    if (widget.status == UpdateStatus.Resume) {
-      core.checkSize();
-      return;
-    }
-
-    if (widget.controller != null) {
-      widget.controller!.setValue(UpdateStatus.Pending);
-    }
-
-    // listenUpdate();
-
-    Directory tempDir = await getTemporaryDirectory();
-    String tempPath = tempDir.path;
-
-    try {
-      await Dio().download(
-        widget.downloadUrl,
-        '$tempPath/app.apk',
-        cancelToken: token,
-        deleteOnError: true,
-        options: Options(
-          receiveDataWhenStatusError: false,
-        ),
-        onReceiveProgress: (progress, totalProgress) {
-          if (!_isUpdated) {
-            //Update Controller
-            _updateController(UpdateStatus.Dowloading);
-            _isUpdated = true;
-          }
-
-          //Update Controller
-          if (widget.controller != null) {
-            widget.controller!.setProgress(progress + 0, totalProgress + 0);
-          }
-
-          //Update progress bar value
-          if (!_goBackground || !_isDisposed) {
-            var percent = progress * 100 / totalProgress;
-            progressNotifier.value = progress / totalProgress;
-            progressPercentNotifier.value = '${percent.toStringAsFixed(2)} %';
-
-            progressSizeNotifier.value =
-                '${formatBytes(progress, 1)} / ${formatBytes(totalProgress, 1)}';
-          }
-          if (progress == totalProgress) {
-            //Update Controller
-            _updateController(UpdateStatus.Completed);
-
-            //Dismiss the dialog
-            if (!_goBackground) _dismiss();
-
-            //Open the downloaded apk file
-            OpenFile.open('$tempPath/app.apk');
-          }
-        },
-      );
-    } catch (e) {
-      if (e is DioError) {
-        _updateController(UpdateStatus.Cancelled, e);
-      } else {
-        _updateController(UpdateStatus.Failed, e);
-      }
-
-      _dismiss();
-
-      debugPrint('Download canceled');
-    }
-  }
-
-  _updateController(UpdateStatus updateStatus, [e]) {
-    if (widget.controller != null) {
-      widget.controller!.setValue(updateStatus);
-
-      if (e != null) {
-        widget.controller!
-            .setError(token.isCancelled ? 'Download Cancelled \n$e' : e);
-      }
-    }
   }
 
   void _updateStatus(UpdateStatus newStatus) {
