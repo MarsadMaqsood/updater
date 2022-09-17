@@ -4,7 +4,8 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:open_file/open_file.dart';
+// import 'package:open_file/open_file.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:updater/updater.dart';
 import 'package:updater/utils/constants.dart';
@@ -108,7 +109,8 @@ class DownloadCore {
           if (!_goBackground) dismiss.call();
 
           //Open the downloaded apk file
-          OpenFile.open('${tempDirectory.path}/app.apk');
+          // OpenFile.open('${tempDirectory.path}/app.apk');
+          OpenFilex.open('${tempDirectory.path}/app.apk');
         }
 
         if (progress == totalProgress && isResumed) {
@@ -188,7 +190,8 @@ class DownloadCore {
 
     await file.writeAsBytes(list);
 
-    OpenFile.open(file.path);
+    // OpenFile.open(file.path);
+    OpenFilex.open(file.path);
   }
 
   void pause() {
@@ -201,8 +204,13 @@ class DownloadCore {
 
   Future<Directory> directory() async {
     Directory tempDir = await getTemporaryDirectory();
-    String tempPath = '${tempDir.path}/Updates/';
-    return Directory(tempPath);
+    Directory updateDir = Directory('${tempDir.path}/Updates/');
+
+    if (!await updateDir.exists()) {
+      await updateDir.create();
+    }
+
+    return updateDir;
   }
 
   Future<String> checkSize() async {
