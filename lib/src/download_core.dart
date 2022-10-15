@@ -110,7 +110,8 @@ class DownloadCore {
 
           //Open the downloaded apk file
           // OpenFile.open('${tempDirectory.path}/app.apk');
-          OpenFilex.open('${tempDirectory.path}/app.apk');
+          // OpenFilex.open('${tempDirectory.path}/app.apk');
+          OpenFilex.open(fileName);
         }
 
         if (progress == totalProgress && isResumed) {
