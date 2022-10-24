@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  initializeUpdater() {
+  void initializeUpdater() {
     controller = UpdaterController(
       listener: (UpdateStatus status) {
         debugPrint('Listener: $status');
@@ -101,7 +101,9 @@ class _MyAppState extends State<MyApp> {
     updater = Updater(
       context: context,
       delay: const Duration(milliseconds: 300),
-      url: 'https://codingwithmarsad.web.app/updater.json',
+      url:
+          'https://firebasestorage.googleapis.com/v0/b/studyproject-242f6.appspot.com/o/Updates%2Fstable.json?alt=media&token=d86751ca-60db-416b-84f8-7f796c86efc6',
+      // url: 'https://codingwithmarsad.web.app/updater.json',
       titleText: 'Stay with time',
       // backgroundDownload: false,
       allowSkip: true,
@@ -112,7 +114,7 @@ class _MyAppState extends State<MyApp> {
         debugPrint(model.versionCode.toString());
         debugPrint(model.contentText);
       },
-
+      enableResume: false,
       controller: controller,
     );
   }

@@ -1,5 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.marsad.updater_example">
+
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    
    <application
         android:label="updater_example"
         android:icon="@mipmap/ic_launcher">

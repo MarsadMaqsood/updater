@@ -9,6 +9,7 @@ import 'package:updater/model/update_model.dart';
 import 'package:updater/src/enums.dart';
 import 'package:updater/src/update_dialog.dart';
 import 'package:updater/src/controller.dart';
+import 'package:updater/utils/constants.dart';
 import 'model/version_model.dart';
 
 export 'model/version_model.dart';
@@ -18,6 +19,7 @@ export 'model/update_model.dart';
 
 class Updater {
   Updater({
+    this.id,
     required this.context,
     required this.url,
     this.controller,
@@ -31,7 +33,13 @@ class Updater {
     this.backgroundDownload = true,
     this.elevation,
     this.delay,
-  }) : assert(url.contains('http') == true, "Update url is not valid!");
+    this.enableResume = true,
+  }) : assert(url.contains('http') == true, "Update url is not valid!") {
+    id = getRandomString(8);
+  }
+
+  ///id
+  String? id;
 
   ///Build Context
   final BuildContext context;
@@ -40,6 +48,7 @@ class Updater {
   final String url;
 
   ///Allow the dialog to cancel or skip
+  /// This also controll the `barrierDismissible` property of dialog
   ///Default is `allowSkip = true`
   bool allowSkip;
 
@@ -53,7 +62,7 @@ class Updater {
   final String? titleText;
 
   ///Change update dialog content text
-  String? contentText;
+  String contentText;
 
   ///Set rootNavigator value to dismiss dialog
   ///Default is `rootNavigator = true`
@@ -95,13 +104,16 @@ class Updater {
   ///This will add delay when checking for an update.
   final Duration? delay;
 
+  ///Enable or disable resume feature.
+  final bool enableResume;
+
   ///Function to check for update
   Future<bool> check({withDialog = true}) async {
     if (!Platform.isAndroid) return false;
 
     if (delay != null) await Future.delayed(delay!);
 
-    _updateController(UpdateStatus.Checking);
+    updateController = UpdateStatus.Checking;
 
     http.Response response = await http.get(Uri.parse(url));
     dynamic data = jsonDecode(response.body);
@@ -114,53 +126,66 @@ class Updater {
       data['contentText'],
     );
 
-    if (callBack != null) {
-      callBack!(model);
+    ///Throw exception if provided download url is not valid
+    if (!model.downloadUrl.contains('http')) {
+      throw Exception(
+          'Invalid download url.\nDownload url should contain http / https.');
     }
 
-    if (contentText == '') {
-      contentText = model.contentText;
-    }
+    ///Update value in callback function
+    if (callBack != null) callBack!(model);
+
+    ///Set server value to `contentText` if value is empty
+    if (contentText.isEmpty) contentText = model.contentText;
 
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     int buildNumber = int.parse(packageInfo.buildNumber);
 
+    ///Return `false` if current build number is greater
+    ///than the update version.
+    if (buildNumber > model.versionCode) {
+      updateAvailable = false;
+      return false;
+    }
+
+    //Override the `allowSkip` parameter to `false`
+    // if minimum supported version is greater or equal to the current build number
     if (model.minSupport >= buildNumber) {
       allowSkip = false;
     }
 
-    if (buildNumber < model.versionCode && model.downloadUrl.contains('http')) {
-      _updateAvailable(true);
-      _updateController(UpdateStatus.Available);
+    updateAvailable = true;
+    updateController = UpdateStatus.Available;
 
-      _downloadUrl = model.downloadUrl;
-      if (withDialog) {
-        showDialog(
-            context: context,
-            barrierDismissible: allowSkip,
-            builder: (_) {
-              return _buildDialog;
-            }).then((value) {
-          if (value == null) {
-            _updateController(UpdateStatus.DialogDismissed);
-          }
-        });
-      }
+    _downloadUrl = model.downloadUrl;
 
-      return true; // update is available
+    if (withDialog) {
+      showDialog(
+          context: context,
+          barrierDismissible: allowSkip,
+          builder: (_) {
+            return _buildDialog;
+          }).then((value) {
+        if (value == null) {
+          updateController = UpdateStatus.DialogDismissed;
+        }
+      });
     }
-    _updateAvailable(false);
-    return false; // no update is available
+
+    return true; // update is available
   }
 
   ///Function to resume update
-  Future<bool> resume() async {
-    if (controller != null) {
-      controller!.setValue(UpdateStatus.Resume);
-    }
+  Future<void> resume() async {
+    updateController = UpdateStatus.Resume;
 
+    ///if download url is empty then again check for update.
     if (_downloadUrl.isEmpty) {
-      await check(withDialog: false);
+      bool isAvailable = await check(withDialog: false);
+      if (!isAvailable) {
+        throw Exception(
+            'Download Url is empty and no update is currently available');
+      }
     }
 
     _status = UpdateStatus.Paused;
@@ -173,39 +198,43 @@ class Updater {
         }).then((value) {
       if (value == null) {
         _status = UpdateStatus.none;
-        _updateController(UpdateStatus.DialogDismissed);
+
+        updateController = UpdateStatus.DialogDismissed;
       }
     });
-
-    return true;
   }
 
   ///Function to resume update
   void pause() {
-    if (controller != null) {
-      controller!.setValue(UpdateStatus.Paused);
-    }
+    updateController = UpdateStatus.Paused;
+    // if (controller != null) {
+    //   controller!.setValue(UpdateStatus.Paused);
+    // }
   }
 
   String _downloadUrl = '';
   UpdateStatus _status = UpdateStatus.none;
 
-  // ///Cancel token for canceling [Dio] download.
+  ///Cancel token for canceling [Dio] download.
   // final CancelToken _token = CancelToken();
 
-  Widget get _buildDialog =>
-      WillPopScope(onWillPop: _onWillPop, child: _buildDialogUI());
+  Widget get _buildDialog => WillPopScope(
+        onWillPop: () async {
+          return allowSkip;
+        },
+        child: _buildDialogUI,
+      );
 
-  final bool _dismissOnTouchOutside = true;
-  Future<bool> _onWillPop() async =>
-      allowSkip ? _dismissOnTouchOutside : allowSkip;
+  // final bool _dismissOnTouchOutside = true;
+  // Future<bool> _onWillPop() async =>
+  // allowSkip ? _dismissOnTouchOutside : allowSkip;
 
-  _buildDialogUI() {
+  Widget get _buildDialogUI {
     return UpdateDialog(
       context: context,
       controller: controller,
       titleText: titleText!,
-      contentText: contentText!,
+      contentText: contentText,
       confirmText: confirmText,
       cancelText: cancelText,
       rootNavigator: rootNavigator,
@@ -217,17 +246,18 @@ class Updater {
     );
   }
 
-  _updateController(UpdateStatus updateStatus) {
-    if (controller != null) {
-      controller!.setValue(updateStatus);
-    }
+  set updateController(UpdateStatus updateStatus) {
+    // if (controller != null) {
+    // controller!.setValue(updateStatus);
+    controller?.setValue(updateStatus);
+    // }
   }
 
   /// Will return true/false from `check()` if an update is available.
-  _updateAvailable(bool value) {
-    if (controller != null) {
-      controller!.setAvailability(value);
-    }
+  set updateAvailable(bool value) {
+    // if (controller != null) {
+    controller?.setAvailability(value);
+    // }
   }
 }
 

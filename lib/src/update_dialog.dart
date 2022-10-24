@@ -57,6 +57,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
     status = widget.status;
 
     core = DownloadCore(
+      id: '', //TODO id parameter
       url: widget.downloadUrl,
       token: token,
       progressNotifier: progressNotifier,
@@ -275,19 +276,21 @@ class _UpdateDialogState extends State<UpdateDialog> {
               ),
               IconButton(
                 onPressed: () {
+                  if (status == UpdateStatus.Cancelled) {
+                    core.resume();
+                  } else if (status == UpdateStatus.Dowloading) {
+                    // token.cancel();
+                    core.pause();
+                  }
+
                   if (status == UpdateStatus.Resume) {
                     _updateStatus(UpdateStatus.Paused);
                   } else if (status == UpdateStatus.Paused) {
                     _updateStatus(UpdateStatus.Resume);
                   } else if (status == UpdateStatus.Dowloading) {
                     _updateStatus(UpdateStatus.Cancelled);
-                  }
-
-                  if (status == UpdateStatus.Resume) {
-                    core.resume();
-                  } else {
-                    // token.cancel();
-                    core.pause();
+                  } else if (status == UpdateStatus.Cancelled) {
+                    _updateStatus(UpdateStatus.Resume);
                   }
 
                   // _dismiss();

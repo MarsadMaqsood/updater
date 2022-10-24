@@ -32,7 +32,7 @@ class UpdaterController extends ChangeNotifier with Download {
   ///Return true/false based on update available or not
   void Function(bool isAvailable)? onChecked;
 
-  ///Retrun download progress
+  ///Return download progress
   ///
   ///
   ///```
