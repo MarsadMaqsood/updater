@@ -72,6 +72,7 @@ class UpdaterController extends ChangeNotifier {
   }
 
   void setValue(UpdateStatus status) {
+    this.status = status;
     if (listener != null) listener!(status);
     if (!_isDisposed) notifyListeners();
   }

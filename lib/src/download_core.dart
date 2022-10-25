@@ -158,6 +158,7 @@ class DownloadCore {
     }
 
     String totalLength = await checkFileSize();
+    if (totalLength.isEmpty) totalLength = '0';
 
     var percent = length * 100 / int.parse(totalLength);
     progressNotifier.value = length / int.parse(totalLength);

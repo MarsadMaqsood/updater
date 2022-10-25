@@ -2,6 +2,7 @@ library updater;
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
@@ -113,7 +114,7 @@ class Updater {
 
     if (delay != null) await Future.delayed(delay!);
 
-    updateController = UpdateStatus.Checking;
+    controller?.setValue(UpdateStatus.Checking);
 
     http.Response response = await http.get(Uri.parse(url));
     dynamic data = jsonDecode(response.body);
@@ -155,7 +156,8 @@ class Updater {
     }
 
     updateAvailable = true;
-    updateController = UpdateStatus.Available;
+
+    controller?.setValue(UpdateStatus.Available);
 
     _downloadUrl = model.downloadUrl;
 
@@ -167,7 +169,7 @@ class Updater {
             return _buildDialog;
           }).then((value) {
         if (value == null) {
-          updateController = UpdateStatus.DialogDismissed;
+          controller?.setValue(UpdateStatus.DialogDismissed);
         }
       });
     }
@@ -175,48 +177,58 @@ class Updater {
     return true; // update is available
   }
 
-  ///Function to resume update
-  Future<void> resume() async {
-    updateController = UpdateStatus.Resume;
+  // ///Function to resume update
+  // Future<void> resume() async {
+  //   controller?.setValue(UpdateStatus.Resume);
 
-    ///if download url is empty then again check for update.
-    if (_downloadUrl.isEmpty) {
-      bool isAvailable = await check(withDialog: false);
-      if (!isAvailable) {
-        throw Exception(
-            'Download Url is empty and no update is currently available');
-      }
-    }
+  //   ///if download url is empty then again check for update.
+  //   if (_downloadUrl.isEmpty) {
+  //     bool isAvailable = await check(withDialog: false);
+  //     if (!isAvailable) {
+  //       throw Exception(
+  //           'Download Url is empty and no update is currently available');
+  //     }
+  //   }
 
-    _status = UpdateStatus.Paused;
+  //   _status = UpdateStatus.Paused;
 
-    showDialog(
-        context: context,
-        barrierDismissible: allowSkip,
-        builder: (_) {
-          return _buildDialog;
-        }).then((value) {
-      if (value == null) {
-        _status = UpdateStatus.none;
+  //   showDialog(
+  //       context: context,
+  //       barrierDismissible: allowSkip,
+  //       builder: (_) {
+  //         return _buildDialog;
+  //       }).then((value) {
+  //     if (value == null) {
+  //       _status = UpdateStatus.none;
 
-        updateController = UpdateStatus.DialogDismissed;
-      }
-    });
-  }
+  //       controller?.setValue(UpdateStatus.DialogDismissed);
+  //     }
+  //   });
+  // }
 
-  ///Function to resume update
-  void pause() {
-    updateController = UpdateStatus.Paused;
-    // if (controller != null) {
-    //   controller!.setValue(UpdateStatus.Paused);
-    // }
-  }
+  // ///Function to resume update
+  // void pause() {
+  //   if (controller == null) {
+  //     _token.cancel();
+  //     return;
+  //   }
+  //   controller?.setValue(UpdateStatus.Paused);
+  // }
+
+  // void cancel() {
+  //   _status = UpdateStatus.Cancelled;
+  //   if (controller == null) {
+  //     _token.cancel();
+  //     return;
+  //   }
+  //   controller?.setValue(UpdateStatus.Cancelled);
+  // }
 
   String _downloadUrl = '';
-  UpdateStatus _status = UpdateStatus.none;
+  final UpdateStatus _status = UpdateStatus.none;
 
   ///Cancel token for canceling [Dio] download.
-  // final CancelToken _token = CancelToken();
+  final CancelToken _token = CancelToken();
 
   Widget get _buildDialog => WillPopScope(
         onWillPop: () async {
@@ -244,14 +256,9 @@ class Updater {
       backgroundDownload: backgroundDownload!,
       elevation: elevation ?? 0,
       status: _status,
+      enableResume: enableResume,
+      token: _token,
     );
-  }
-
-  set updateController(UpdateStatus updateStatus) {
-    // if (controller != null) {
-    // controller!.setValue(updateStatus);
-    controller?.setValue(updateStatus);
-    // }
   }
 
   /// Will return true/false from `check()` if an update is available.

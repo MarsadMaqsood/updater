@@ -5,7 +5,7 @@ A package to check for the custom in-app updates for Flutter.
 ## ⭐ Installing
 ```
 dependencies:
-    updater: ^0.1.4-experimental
+    updater: ^0.1.4-experimental-2
 ```
 
 ## ⚡ Import 
@@ -37,6 +37,7 @@ backgroundDownload → bool
 callBack → Function(String, int, String, int String)
 controller → UpdaterController
 delay → Duration
+enableResume → bool
 ```
 
 ## UpdateStatus
@@ -79,6 +80,19 @@ contentText:   //specify content text, if contentText is not defined in app then
 url:          //App file download link
 ```
 
+## ⚙ Setup
+
+<details><summary>Android</summary>
+
+- Add `REQUEST_INSTALL_PACKAGES` permission to open and install apk file
+
+```xml
+<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+```
+
+
+</details>
+
 ## 📙 How To Use
 
 Inside `pubspec.yaml` file
@@ -104,11 +118,10 @@ version: 0.0.3+1  #Like here the VersionCode is 1
         },
     );
 
-    //To cancel the download
-    //controller.cancel();
 
     Updater updater = Updater(
         context: context,
+        controller: controller,
         url: 'JSON_FILE_URL',
         titleText: 'Update available',
         // backgroundDownload: false,
@@ -116,17 +129,30 @@ version: 0.0.3+1  #Like here the VersionCode is 1
         contentText:
             'Update your app to the latest version to enjoy new feature.',
         // allowSkip: false,
-        callBack: (verName, verCode, contentText, minSupport, downloadUrl) {
-          print(
-              '$verName - $verCode - $contentText - $minSupport - $downloadUrl');
+        callBack: (UpdateModel model) {
+
+          print(model.versionName);
+          print(model.versionCode);
+          print(model.contentText);
+          
         },
-        controller: controller,
+        
+        enableResume: false,
     );
     updater.check();
     
-    updater.resume();
     
-    updater.pause();
+    //To cancel the download
+    //controller.cancel();
+
+
+    //To pause the download
+    //controller.pause();
+
+    //To resume the download
+    //controller.resume();
+
+    
     
 ```
 

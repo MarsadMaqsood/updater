@@ -1,3 +1,8 @@
+## 0.1.4-experimental-2
+- Fix: issue where downloaded file not opening
+- Fix: some other bugs
+- Imporved performance
+
 ## 0.1.4-experimental-1
 - Fix: issue
 

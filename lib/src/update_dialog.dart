@@ -19,9 +19,10 @@ class UpdateDialog extends StatefulWidget {
     this.confirmText,
     this.cancelText,
     required this.elevation,
-    // required this.token,
+    required this.token,
     this.status = UpdateStatus.Dowloading,
     required this.id,
+    required this.enableResume,
   });
 
   final BuildContext context;
@@ -33,9 +34,10 @@ class UpdateDialog extends StatefulWidget {
   final bool rootNavigator;
   final bool allowSkip;
   final bool backgroundDownload;
+  final bool enableResume;
   final double elevation;
   final UpdaterController? controller;
-  // final CancelToken token;
+  final CancelToken token;
   final UpdateStatus status;
   final String id;
 
@@ -49,7 +51,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
   ValueNotifier<String> progressSizeNotifier = ValueNotifier('');
 
   bool _changeDialog = false;
-  var token = CancelToken();
   late DownloadCore core;
   late UpdateStatus status;
 
@@ -62,7 +63,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
     core = DownloadCore(
       id: widget.id,
       url: widget.downloadUrl,
-      token: token,
+      token: widget.token,
       progressNotifier: progressNotifier,
       progressPercentNotifier: progressPercentNotifier,
       progressSizeNotifier: progressSizeNotifier,
@@ -279,6 +280,10 @@ class _UpdateDialogState extends State<UpdateDialog> {
               ),
               IconButton(
                 onPressed: () {
+                  if (!widget.enableResume) {
+                    core.cancel();
+                    return;
+                  }
                   if (status == UpdateStatus.Dowloading ||
                       status == UpdateStatus.Resume) {
                     core.pause();
@@ -293,11 +298,15 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 },
                 padding: const EdgeInsets.all(6),
                 constraints: const BoxConstraints(),
-                icon: Icon(status == UpdateStatus.Dowloading
-                    ? Icons.clear_rounded
-                    : status == UpdateStatus.Resume
-                        ? Icons.pause_rounded
-                        : Icons.play_arrow_rounded),
+                icon: Icon(
+                  !widget.enableResume
+                      ? Icons.clear_rounded
+                      : (status == UpdateStatus.Dowloading
+                          ? Icons.clear_rounded
+                          : status == UpdateStatus.Resume
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded),
+                ),
               ),
             ],
           ),
