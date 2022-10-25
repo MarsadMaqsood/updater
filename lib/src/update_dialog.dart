@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:updater/src/download_core.dart';
 import 'package:updater/src/enums.dart';
 import 'package:updater/src/controller.dart';
-import 'package:updater/utils/constants.dart';
 
 class UpdateDialog extends StatefulWidget {
   const UpdateDialog({
@@ -355,43 +354,22 @@ class _UpdateDialogState extends State<UpdateDialog> {
 
   listenUpdate() {
     widget.controller?.addListener(() {
-      printWarning(widget.controller?.status.name);
-
       if (widget.controller?.status == UpdateStatus.Resume) {
-        // widget.controller?.status == UpdateStatus.Resume;
-        widget.controller?.status = UpdateStatus.none;
-        printInfo('object');
+        widget.controller?.setValue(UpdateStatus.none);
         core.resume();
       }
 
       if (widget.controller?.status == UpdateStatus.Paused) {
-        // widget.controller?.status == UpdateStatus.Paused;
-        widget.controller?.status = UpdateStatus.none;
-        // widget.controller?.removeListener(() {});
+        widget.controller?.setValue(UpdateStatus.none);
+
         core.pause();
       }
 
       if (widget.controller?.status == UpdateStatus.Cancelled) {
-        widget.controller?.status = UpdateStatus.none;
+        widget.controller?.setValue(UpdateStatus.none);
         core.cancel();
       }
     });
-    // widget.controller?.addListener(() {
-    //   // if (widget.controller!.isCanceled.value) {
-    //   //   // token.cancel();
-    //   //   core.pause();
-    //   // }
-    //   if (widget.controller!.status == DownloadStatus.isResumed) {
-    //     widget.controller!.status == DownloadStatus.none;
-    //     core.resume();
-    //   }
-
-    //   if (widget.controller!.status == DownloadStatus.isPaused ||
-    //       widget.controller!.status == DownloadStatus.isCanceled) {
-    //     widget.controller!.status == DownloadStatus.none;
-    //     core.pause();
-    //   }
-    // });
   }
 
   void _updateStatus(UpdateStatus newStatus) {

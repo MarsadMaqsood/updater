@@ -12,7 +12,7 @@ class AppMain extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: "Test",
+      title: "Updater",
       home: MyApp(),
     );
   }
@@ -94,7 +94,7 @@ class _MyAppState extends State<MyApp> {
     updater = Updater(
       context: context,
       delay: const Duration(milliseconds: 300),
-      url: 'https://marsad.dev/updater.json',
+      url: 'https://codingwithmarsad.web.app/updater.json',
       titleText: 'Stay with time',
       // backgroundDownload: false,
       allowSkip: true,
@@ -105,7 +105,6 @@ class _MyAppState extends State<MyApp> {
         debugPrint(model.versionCode.toString());
         debugPrint(model.contentText);
       },
-
       enableResume: false,
       controller: controller,
     );
@@ -114,8 +113,7 @@ class _MyAppState extends State<MyApp> {
   checkUpdate() async {
     bool isAvailable = await updater.check();
 
-    printInfo('$isAvailable');
-    // return;
+    debugPrint('$isAvailable');
     await Future.delayed(const Duration(seconds: 6));
 
     controller.pause();

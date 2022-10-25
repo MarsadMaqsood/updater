@@ -68,18 +68,12 @@ class DownloadCore {
 
     String fileName = '${tempDirectory.path}/app$id-${index + 1}.apk';
 
-    // String fileName =
-    //     '${tempDirectory.path}/app${getRandomString(10)}-${index + 1}.apk';
-    i++;
     try {
-      // printInfo(i);
       await Dio().download(
         url,
         fileName,
         cancelToken: token,
         onReceiveProgress: (currentProgress, totalProgress) {
-          // printInfo('$currentProgress ===  $totalProgress');
-
           if (!_isUpdated) {
             controller?.setValue(UpdateStatus.Dowloading);
             _isUpdated = true;
@@ -140,12 +134,9 @@ class DownloadCore {
         deleteOnError: false,
       );
     } catch (e) {
-      // printInfo(i);
       printError(e);
     }
   }
-
-  int i = 0;
 
   Future<void> lastDownloadProgress() async {
     Directory tempDirectory = await directory();
