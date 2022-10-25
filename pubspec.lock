@@ -36,13 +36,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.16.0"
-  csslib:
-    dependency: transitive
-    description:
-      name: csslib
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.17.2"
   dio:
     dependency: "direct main"
     description:
@@ -93,13 +86,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  html:
-    dependency: "direct main"
-    description:
-      name: html
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.15.1"
   http:
     dependency: "direct main"
     description:
@@ -323,5 +309,5 @@ packages:
     source: hosted
     version: "0.2.0+2"
 sdks:
-  dart: ">=2.17.0 <3.0.0"
+  dart: ">=2.18.2 <3.0.0"
   flutter: ">=3.0.0"

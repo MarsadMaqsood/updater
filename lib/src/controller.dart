@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:updater/src/core.dart';
 import 'package:updater/src/enums.dart';
 
-class UpdaterController extends ChangeNotifier with Download {
+class UpdaterController extends ChangeNotifier {
   UpdaterController({
     this.listener,
     this.onChecked,
     this.progress,
     this.onError,
   });
+
+  bool _isDisposed = false;
 
   ///Return [UpdateStatus] whenever new event trigger
   ///
@@ -49,50 +50,56 @@ class UpdaterController extends ChangeNotifier with Download {
   ///Cancel the current download
   // ValueNotifier isCanceled = ValueNotifier(false);
 
+  UpdateStatus status = UpdateStatus.none;
+
   void cancel() {
     // isCanceled.value = true;
-    status = DownloadStatus.isCanceled;
-    notifyListeners();
+    // status = DownloadStatus.isCanceled;
+    status = UpdateStatus.Cancelled;
+    if (!_isDisposed) notifyListeners();
   }
 
   void pause() {
-    status = DownloadStatus.isPaused;
-    notifyListeners();
+    // status = DownloadStatus.isPaused;
+    status = UpdateStatus.Paused;
+    if (!_isDisposed) notifyListeners();
   }
 
   void resume() {
-    status = DownloadStatus.isResumed;
-    notifyListeners();
+    // status = DownloadStatus.isResumed;
+    status = UpdateStatus.Resume;
+    if (!_isDisposed) notifyListeners();
   }
 
   void setValue(UpdateStatus status) {
     if (listener != null) listener!(status);
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setAvailability(bool isAvailable) {
     if (onChecked != null) {
       onChecked!(isAvailable);
-
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     }
   }
 
   void setProgress(current, total) {
     if (progress != null) progress!(current, total);
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   void setError(error) {
     if (onError != null) onError!(error);
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
     listener = null;
     progress = null;
     onError = null;
+
     super.dispose();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:updater/updater.dart';
+import 'package:updater/utils/constants.dart';
 
 void main() {
   runApp(const AppMain());
@@ -122,11 +123,22 @@ class _MyAppState extends State<MyApp> {
   checkUpdate() async {
     bool isAvailable = await updater.check();
 
-    debugPrint('$isAvailable');
+    printInfo('$isAvailable');
 
-    // ///e.g: Cancel downloading after 5 secounds of downloading
-    Future.delayed(const Duration(seconds: 5), () {
-      // controller.cancel();
-    });
+    await Future.delayed(const Duration(seconds: 6));
+    controller.pause();
+    printInfo('Cancel Call');
+
+    await Future.delayed(const Duration(seconds: 6));
+    controller.resume();
+    printInfo('Resume Call');
+
+    await Future.delayed(const Duration(seconds: 6));
+
+    controller.pause();
+    printInfo('Pause Call');
+    await Future.delayed(const Duration(seconds: 6));
+    controller.resume();
+    printInfo('Resume Call');
   }
 }

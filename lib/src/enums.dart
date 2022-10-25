@@ -32,10 +32,10 @@ enum UpdateStatus {
   none,
 }
 
-enum DownloadStatus {
-  isDownloading,
-  isPaused,
-  isCanceled,
-  isResumed,
-  none,
-}
+// enum DownloadStatus {
+//   isDownloading,
+//   isPaused,
+//   isCanceled,
+//   isResumed,
+//   none,
+// }

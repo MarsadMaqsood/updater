@@ -13,7 +13,7 @@ import 'package:updater/utils/constants.dart';
 import 'model/version_model.dart';
 
 export 'model/version_model.dart';
-export 'src/enums.dart' hide DownloadStatus;
+export 'src/enums.dart';
 export 'src/controller.dart';
 export 'model/update_model.dart';
 
@@ -35,10 +35,10 @@ class Updater {
     this.delay,
     this.enableResume = true,
   }) : assert(url.contains('http') == true, "Update url is not valid!") {
-    id = getRandomString(8);
+    id ??= getRandomString(8);
   }
 
-  ///id
+  ///Unique id of download process
   String? id;
 
   ///Build Context
@@ -232,6 +232,7 @@ class Updater {
   Widget get _buildDialogUI {
     return UpdateDialog(
       context: context,
+      id: id!,
       controller: controller,
       titleText: titleText!,
       contentText: contentText,

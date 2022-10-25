@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:updater/src/download_core.dart';
 import 'package:updater/src/enums.dart';
 import 'package:updater/src/controller.dart';
+import 'package:updater/utils/constants.dart';
 
 class UpdateDialog extends StatefulWidget {
   const UpdateDialog({
-    Key? key,
+    super.key,
     required this.context,
     required this.controller,
     required this.titleText,
@@ -20,7 +21,8 @@ class UpdateDialog extends StatefulWidget {
     required this.elevation,
     // required this.token,
     this.status = UpdateStatus.Dowloading,
-  }) : super(key: key);
+    required this.id,
+  });
 
   final BuildContext context;
   final String titleText;
@@ -35,6 +37,7 @@ class UpdateDialog extends StatefulWidget {
   final UpdaterController? controller;
   // final CancelToken token;
   final UpdateStatus status;
+  final String id;
 
   @override
   State<UpdateDialog> createState() => _UpdateDialogState();
@@ -57,7 +60,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
     status = widget.status;
 
     core = DownloadCore(
-      id: '', //TODO id parameter
+      id: widget.id,
       url: widget.downloadUrl,
       token: token,
       progressNotifier: progressNotifier,
@@ -67,7 +70,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
       dismiss: _dismiss,
     );
     if (widget.status == UpdateStatus.Paused) {
-      core.lastStatus();
+      core.lastDownloadProgress();
     }
     listenUpdate();
   }
@@ -276,20 +279,13 @@ class _UpdateDialogState extends State<UpdateDialog> {
               ),
               IconButton(
                 onPressed: () {
-                  if (status == UpdateStatus.Cancelled) {
-                    core.resume();
-                  } else if (status == UpdateStatus.Dowloading) {
-                    // token.cancel();
+                  if (status == UpdateStatus.Dowloading ||
+                      status == UpdateStatus.Resume) {
                     core.pause();
-                  }
-
-                  if (status == UpdateStatus.Resume) {
                     _updateStatus(UpdateStatus.Paused);
-                  } else if (status == UpdateStatus.Paused) {
-                    _updateStatus(UpdateStatus.Resume);
-                  } else if (status == UpdateStatus.Dowloading) {
-                    _updateStatus(UpdateStatus.Cancelled);
-                  } else if (status == UpdateStatus.Cancelled) {
+                  } else if (status == UpdateStatus.Paused ||
+                      status == UpdateStatus.Cancelled) {
+                    core.resume();
                     _updateStatus(UpdateStatus.Resume);
                   }
 
@@ -350,21 +346,43 @@ class _UpdateDialogState extends State<UpdateDialog> {
 
   listenUpdate() {
     widget.controller?.addListener(() {
-      // if (widget.controller!.isCanceled.value) {
-      //   // token.cancel();
-      //   core.pause();
-      // }
-      if (widget.controller!.status == DownloadStatus.isResumed) {
-        widget.controller!.status == DownloadStatus.none;
+      printWarning(widget.controller?.status.name);
+
+      if (widget.controller?.status == UpdateStatus.Resume) {
+        // widget.controller?.status == UpdateStatus.Resume;
+        widget.controller?.status = UpdateStatus.none;
+        printInfo('object');
         core.resume();
       }
 
-      if (widget.controller!.status == DownloadStatus.isPaused ||
-          widget.controller!.status == DownloadStatus.isCanceled) {
-        widget.controller!.status == DownloadStatus.none;
+      if (widget.controller?.status == UpdateStatus.Paused) {
+        // widget.controller?.status == UpdateStatus.Paused;
+        widget.controller?.status = UpdateStatus.none;
+        // widget.controller?.removeListener(() {});
         core.pause();
       }
+
+      if (widget.controller?.status == UpdateStatus.Cancelled) {
+        widget.controller?.status = UpdateStatus.none;
+        core.cancel();
+      }
     });
+    // widget.controller?.addListener(() {
+    //   // if (widget.controller!.isCanceled.value) {
+    //   //   // token.cancel();
+    //   //   core.pause();
+    //   // }
+    //   if (widget.controller!.status == DownloadStatus.isResumed) {
+    //     widget.controller!.status == DownloadStatus.none;
+    //     core.resume();
+    //   }
+
+    //   if (widget.controller!.status == DownloadStatus.isPaused ||
+    //       widget.controller!.status == DownloadStatus.isCanceled) {
+    //     widget.controller!.status == DownloadStatus.none;
+    //     core.pause();
+    //   }
+    // });
   }
 
   void _updateStatus(UpdateStatus newStatus) {
