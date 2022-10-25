@@ -43,12 +43,14 @@ enableResume → bool
 ## UpdateStatus
 ```dart
 UpdateStatus.Checking
-UpdateStatus.Available
-UpdateStatus.DialogDismissed
 UpdateStatus.Pending
+UpdateStatus.Available
 UpdateStatus.Dowloading
-UpdateStatus.Completed
+UpdateStatus.Paused
+UpdateStatus.Resume
 UpdateStatus.Cancelled
+UpdateStatus.Completed
+UpdateStatus.DialogDismissed
 UpdateStatus.Failed
 ```
 
