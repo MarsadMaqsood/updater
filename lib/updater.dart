@@ -144,7 +144,7 @@ class Updater {
 
     ///Return `false` if current build number is greater
     ///than the update version.
-    if (buildNumber > model.versionCode) {
+    if (buildNumber >= model.versionCode) {
       updateAvailable = false;
       return false;
     }
