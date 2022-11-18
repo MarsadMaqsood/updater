@@ -1,6 +1,6 @@
 ## 0.1.4
 - Added pause and resume support
-- Fix: bug
+- Fix: [#5](https://github.com/MarsadMaqsood/updater/pull/5#issue-1407313885) and some other bug
 
 ## 0.1.4-experimental-3
 - Fix: bug
