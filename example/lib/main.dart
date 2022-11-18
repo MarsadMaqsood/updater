@@ -93,9 +93,7 @@ class _MyAppState extends State<MyApp> {
     updater = Updater(
       context: context,
       delay: const Duration(milliseconds: 300),
-      // url: 'https://codingwithmarsad.web.app/updater.json',
-      url:
-          'https://firebasestorage.googleapis.com/v0/b/studyproject-242f6.appspot.com/o/Updates%2Fstable.json?alt=media&token=4aed2136-82e4-41ec-bbfb-066f48b47eb5',
+      url: 'https://codingwithmarsad.web.app/updater.json',
       titleText: 'Stay with time',
       // backgroundDownload: false,
       allowSkip: true,
