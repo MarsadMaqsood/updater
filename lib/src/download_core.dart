@@ -82,7 +82,6 @@ class DownloadCore {
           controller?.setProgress(currentProgress + downloadedLength,
               totalProgress + downloadedLength);
 
-          // if (!_goBackground || !_isDisposed) {
           if (!_isDisposed) {
             double progress = (currentProgress + downloadedLength) /
                 (totalProgress + downloadedLength);
@@ -104,7 +103,7 @@ class DownloadCore {
             //Dismiss the dialog
             if (!_isDisposed) dismiss.call();
 
-            //Open the downloaded apk file
+            ///Open the downloaded apk file
             // OpenFilex.open('${tempDirectory.path}/app.apk');
             OpenFilex.open(fileName);
           }
@@ -160,7 +159,6 @@ class DownloadCore {
   }
 
   void dispose() {
-    // _goBackground = true;
     _isDisposed = true;
   }
 

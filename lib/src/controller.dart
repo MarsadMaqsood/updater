@@ -47,26 +47,19 @@ class UpdaterController extends ChangeNotifier {
   ///Return error
   void Function(Object status)? onError;
 
-  ///Cancel the current download
-  // ValueNotifier isCanceled = ValueNotifier(false);
-
   UpdateStatus status = UpdateStatus.none;
 
   void cancel() {
-    // isCanceled.value = true;
-    // status = DownloadStatus.isCanceled;
     status = UpdateStatus.Cancelled;
     if (!_isDisposed) notifyListeners();
   }
 
   void pause() {
-    // status = DownloadStatus.isPaused;
     status = UpdateStatus.Paused;
     if (!_isDisposed) notifyListeners();
   }
 
   void resume() {
-    // status = DownloadStatus.isResumed;
     status = UpdateStatus.Resume;
     if (!_isDisposed) notifyListeners();
   }

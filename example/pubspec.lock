@@ -155,14 +155,14 @@ packages:
       name: open_filex
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.1.1"
+    version: "4.3.1"
   package_info_plus:
     dependency: transitive
     description:
       name: package_info_plus
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.1"
+    version: "3.0.2"
   package_info_plus_platform_interface:
     dependency: transitive
     description:
@@ -307,7 +307,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.1.4-experimental-3"
+    version: "0.1.4"
   vector_math:
     dependency: transitive
     description:

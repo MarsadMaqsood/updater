@@ -149,8 +149,8 @@ class Updater {
       return false;
     }
 
-    //Override the `allowSkip` parameter to `false`
-    // if minimum supported version is greater or equal to the current build number
+    ///Override the `allowSkip` parameter to `false`
+    /// if minimum supported version is greater or equal to the current build number
     if (model.minSupport >= buildNumber) {
       allowSkip = false;
     }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:updater/updater.dart';
-import 'package:updater/utils/constants.dart';
 
 void main() {
   runApp(const AppMain());
@@ -94,7 +93,9 @@ class _MyAppState extends State<MyApp> {
     updater = Updater(
       context: context,
       delay: const Duration(milliseconds: 300),
-      url: 'https://codingwithmarsad.web.app/updater.json',
+      // url: 'https://codingwithmarsad.web.app/updater.json',
+      url:
+          'https://firebasestorage.googleapis.com/v0/b/studyproject-242f6.appspot.com/o/Updates%2Fstable.json?alt=media&token=4aed2136-82e4-41ec-bbfb-066f48b47eb5',
       titleText: 'Stay with time',
       // backgroundDownload: false,
       allowSkip: true,
@@ -105,7 +106,7 @@ class _MyAppState extends State<MyApp> {
         debugPrint(model.versionCode.toString());
         debugPrint(model.contentText);
       },
-      enableResume: false,
+      enableResume: true,
       controller: controller,
     );
   }
@@ -114,14 +115,8 @@ class _MyAppState extends State<MyApp> {
     bool isAvailable = await updater.check();
 
     debugPrint('$isAvailable');
-    await Future.delayed(const Duration(seconds: 6));
 
-    controller.pause();
-    printInfo('Cancel Call');
-
-    await Future.delayed(const Duration(seconds: 6));
-
-    controller.resume();
-    printInfo('Resume Call');
+    // controller.pause();
+    // controller.resume();
   }
 }
