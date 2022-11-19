@@ -29,5 +29,6 @@ enum UpdateStatus {
   ///Update download resume
   Resume,
 
+  ///none
   none,
 }

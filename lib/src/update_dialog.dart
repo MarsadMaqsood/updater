@@ -25,10 +25,20 @@ class UpdateDialog extends StatefulWidget {
   });
 
   final BuildContext context;
+
+  ///title of the dialog
   final String titleText;
+
+  ///content/body of the dialog
   final String contentText;
+
+  ///confirm button text
   final String? confirmText;
+
+  ///cancel button text
   final String? cancelText;
+
+  ///download url of the app
   final String downloadUrl;
   final bool rootNavigator;
   final bool allowSkip;
@@ -45,10 +55,16 @@ class UpdateDialog extends StatefulWidget {
 }
 
 class _UpdateDialogState extends State<UpdateDialog> {
+  ///Current progress
   ValueNotifier<double> progressNotifier = ValueNotifier(0.0);
+
+  ///Current progress in percentage
   ValueNotifier<String> progressPercentNotifier = ValueNotifier('');
+
+  ///Current progress size
   ValueNotifier<String> progressSizeNotifier = ValueNotifier('');
 
+  ///Dialog state changed or not
   bool _changeDialog = false;
   late DownloadCore core;
   late UpdateStatus status;
@@ -98,6 +114,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
     );
   }
 
+  ///Update dialog UI
   Widget _updateContentWidget() {
     return Padding(
       padding: const EdgeInsets.all(14.0),
@@ -215,6 +232,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
     );
   }
 
+  ///download dialog UI
   Widget _downloadContentWidget() {
     return Padding(
       padding: const EdgeInsets.all(14.0),
@@ -348,10 +366,12 @@ class _UpdateDialogState extends State<UpdateDialog> {
     );
   }
 
+  ///dismiss the dialog
   _dismiss() {
     Navigator.of(context, rootNavigator: widget.rootNavigator).pop();
   }
 
+  ///listen of value events
   listenUpdate() {
     widget.controller?.addListener(() {
       if (widget.controller?.status == UpdateStatus.Resume) {
@@ -372,6 +392,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
     });
   }
 
+  ///update the current status and controller value
   void _updateStatus(UpdateStatus newStatus) {
     setState(() {
       status = newStatus;

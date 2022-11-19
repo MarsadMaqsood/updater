@@ -9,6 +9,7 @@ class UpdaterController extends ChangeNotifier {
     this.onError,
   });
 
+  ///controller is disposed
   bool _isDisposed = false;
 
   ///Return [UpdateStatus] whenever new event trigger

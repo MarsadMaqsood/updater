@@ -224,7 +224,10 @@ class Updater {
   //   controller?.setValue(UpdateStatus.Cancelled);
   // }
 
+  ///App download url
   String _downloadUrl = '';
+
+  ///Current update status
   final UpdateStatus _status = UpdateStatus.none;
 
   ///Cancel token for canceling [Dio] download.
