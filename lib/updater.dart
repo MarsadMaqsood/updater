@@ -145,7 +145,7 @@ class Updater {
     ///Return `false` if current build number is greater
     ///than the update version.
     if (buildNumber >= model.versionCode) {
-      updateAvailable = false;
+      _updateAvailable = false;
       return false;
     }
 
@@ -155,7 +155,7 @@ class Updater {
       allowSkip = false;
     }
 
-    updateAvailable = true;
+    _updateAvailable = true;
 
     controller?.setValue(UpdateStatus.Available);
 
@@ -262,7 +262,7 @@ class Updater {
   }
 
   /// Will return true/false from `check()` if an update is available.
-  set updateAvailable(bool value) {
+  set _updateAvailable(bool value) {
     // if (controller != null) {
     controller?.setAvailability(value);
     // }

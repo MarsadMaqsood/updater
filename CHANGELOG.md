@@ -1,3 +1,5 @@
+## 0.1.5
+- Updated readme
 ## 0.1.4
 - Added pause and resume support
 - Fix: [#5](https://github.com/MarsadMaqsood/updater/pull/5#issue-1407313885) and some other bug

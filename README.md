@@ -5,7 +5,7 @@ A package to check for the custom in-app updates for Flutter.
 ## ⭐ Installing
 ```
 dependencies:
-    updater: ^0.1.4-experimental-2
+    updater: ^0.1.5
 ```
 
 ## ⚡ Import 
