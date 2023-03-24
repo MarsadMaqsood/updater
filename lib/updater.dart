@@ -1,9 +1,7 @@
 library updater;
 
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:platform/platform.dart';
 import 'package:updater/model/update_model.dart';
@@ -13,6 +11,7 @@ import 'package:updater/src/update_dialog.dart';
 import 'package:updater/utils/constants.dart';
 
 import 'model/version_model.dart';
+import 'src/api_task.dart';
 
 export 'model/update_model.dart';
 export 'model/version_model.dart';
@@ -122,8 +121,8 @@ class Updater {
 
     controller?.setValue(UpdateStatus.Checking);
 
-    http.Response response = await http.get(Uri.parse(url));
-    dynamic data = jsonDecode(response.body);
+    Response response = await APITask().get(url);
+    dynamic data = response.data;
 
     UpdateModel model = UpdateModel(
       data['url'],

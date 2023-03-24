@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -6,6 +7,8 @@ import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:updater/updater.dart';
 import 'package:updater/utils/constants.dart';
+
+import 'api_task.dart';
 
 class DownloadCore {
   final String id;
@@ -67,7 +70,7 @@ class DownloadCore {
     String fileName = '${tempDirectory.path}/app$id-${index + 1}.apk';
 
     try {
-      await Dio().download(
+      await APITask().download(
         url,
         fileName,
         cancelToken: token,
@@ -210,7 +213,7 @@ class DownloadCore {
 
   Future<String> checkFileSize() async {
     try {
-      Response response = await Dio().head(url);
+      Response response = await APITask().head(url);
       return (response.headers.value(Headers.contentLengthHeader)) ?? '';
     } catch (e) {
       return '';
