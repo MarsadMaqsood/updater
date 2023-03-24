@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:platform/platform.dart';
 import 'package:updater/updater.dart';
 
 Updater buildUpdater(BuildContext context) {
@@ -72,6 +73,33 @@ void main() {
         isMethodCall('getAll', arguments: null),
       ],
     );
+  });
+
+  testWidgets('Should display updater with Android platform', (WidgetTester tester) async {
+    Updater.platform = FakePlatform(operatingSystem: Platform.android);
+    bool? isAvailable;
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Builder(builder: (BuildContext context) {
+            return TextButton(
+              onPressed: () async {
+                isAvailable = await buildUpdater(context).check();
+                debugPrint('$isAvailable');
+              },
+              child: const Text('Get App Version'),
+            );
+          }),
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+    var buttonFinder = find.widgetWithText(TextButton, 'Get App Version');
+    expect(buttonFinder, findsOneWidget);
+    await tester.tap(buttonFinder);
+    await tester.pumpAndSettle();
+    expect(find.text('Stay with time'), findsOneWidget);
+    // expect(isAvailable, false);
   });
 
   testWidgets('Should not display updater without Android platform', (WidgetTester tester) async {

@@ -1,12 +1,11 @@
 library updater;
 
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:platform/platform.dart';
 import 'package:updater/model/update_model.dart';
 import 'package:updater/src/controller.dart';
 import 'package:updater/src/enums.dart';
@@ -51,7 +50,7 @@ class Updater {
   final String url;
 
   ///Allow the dialog to cancel or skip
-  /// This also controll the `barrierDismissible` property of dialog
+  /// This also control the `barrierDismissible` property of dialog
   ///Default is `allowSkip = true`
   bool allowSkip;
 
@@ -110,9 +109,14 @@ class Updater {
   ///Enable or disable resume feature.
   final bool enableResume;
 
+  @visibleForTesting
+  static Platform platform = const LocalPlatform();
+
+  static bool get _isAndroid => platform.isAndroid;
+
   ///Function to check for update
   Future<bool> check({withDialog = true}) async {
-    if (!Platform.isAndroid) return false;
+    if (!_isAndroid) return false;
 
     if (delay != null) await Future.delayed(delay!);
 
@@ -180,53 +184,6 @@ class Updater {
     return true; // update is available
   }
 
-  // ///Function to resume update
-  // Future<void> resume() async {
-  //   controller?.setValue(UpdateStatus.Resume);
-
-  //   ///if download url is empty then again check for update.
-  //   if (_downloadUrl.isEmpty) {
-  //     bool isAvailable = await check(withDialog: false);
-  //     if (!isAvailable) {
-  //       throw Exception(
-  //           'Download Url is empty and no update is currently available');
-  //     }
-  //   }
-
-  //   _status = UpdateStatus.Paused;
-
-  //   showDialog(
-  //       context: context,
-  //       barrierDismissible: allowSkip,
-  //       builder: (_) {
-  //         return _buildDialog;
-  //       }).then((value) {
-  //     if (value == null) {
-  //       _status = UpdateStatus.none;
-
-  //       controller?.setValue(UpdateStatus.DialogDismissed);
-  //     }
-  //   });
-  // }
-
-  // ///Function to resume update
-  // void pause() {
-  //   if (controller == null) {
-  //     _token.cancel();
-  //     return;
-  //   }
-  //   controller?.setValue(UpdateStatus.Paused);
-  // }
-
-  // void cancel() {
-  //   _status = UpdateStatus.Cancelled;
-  //   if (controller == null) {
-  //     _token.cancel();
-  //     return;
-  //   }
-  //   controller?.setValue(UpdateStatus.Cancelled);
-  // }
-
   ///App download url
   String _downloadUrl = '';
 
@@ -242,10 +199,6 @@ class Updater {
         },
         child: _buildDialogUI,
       );
-
-  // final bool _dismissOnTouchOutside = true;
-  // Future<bool> _onWillPop() async =>
-  // allowSkip ? _dismissOnTouchOutside : allowSkip;
 
   Widget get _buildDialogUI {
     return UpdateDialog(
@@ -269,9 +222,7 @@ class Updater {
 
   /// Will return true/false from `check()` if an update is available.
   set _updateAvailable(bool value) {
-    // if (controller != null) {
     controller?.setAvailability(value);
-    // }
   }
 }
 
