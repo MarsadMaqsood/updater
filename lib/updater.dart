@@ -2,21 +2,23 @@ library updater;
 
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:updater/model/update_model.dart';
+import 'package:updater/src/controller.dart';
 import 'package:updater/src/enums.dart';
 import 'package:updater/src/update_dialog.dart';
-import 'package:updater/src/controller.dart';
 import 'package:updater/utils/constants.dart';
+
 import 'model/version_model.dart';
 
-export 'model/version_model.dart';
-export 'src/enums.dart';
-export 'src/controller.dart';
 export 'model/update_model.dart';
+export 'model/version_model.dart';
+export 'src/controller.dart';
+export 'src/enums.dart';
 
 class Updater {
   Updater({
@@ -129,8 +131,7 @@ class Updater {
 
     ///Throw exception if provided download url is not valid
     if (!model.downloadUrl.contains('http')) {
-      throw Exception(
-          'Invalid download url.\nDownload url should contain http / https.');
+      throw Exception('Invalid download url.\nDownload url should contain http / https.');
     }
 
     ///Update value in callback function
@@ -162,15 +163,17 @@ class Updater {
     _downloadUrl = model.downloadUrl;
 
     if (withDialog) {
-      showDialog(
-          context: context,
-          barrierDismissible: allowSkip,
-          builder: (_) {
-            return _buildDialog;
-          }).then((value) {
-        if (value == null) {
-          controller?.setValue(UpdateStatus.DialogDismissed);
-        }
+      Future.delayed(Duration.zero).then((value) {
+        showDialog(
+            context: context,
+            barrierDismissible: allowSkip,
+            builder: (_) {
+              return _buildDialog;
+            }).then((value) {
+          if (value == null) {
+            controller?.setValue(UpdateStatus.DialogDismissed);
+          }
+        });
       });
     }
 

@@ -61,9 +61,7 @@ class DownloadCore {
     int index = 0;
 
     if (listEntity.isNotEmpty) {
-      index =
-          int.tryParse(listEntity.last.path.split('-').last.split('.').first) ??
-              0;
+      index = int.tryParse(listEntity.last.path.split('-').last.split('.').first) ?? 0;
     }
 
     String fileName = '${tempDirectory.path}/app$id-${index + 1}.apk';
@@ -79,20 +77,17 @@ class DownloadCore {
             _isUpdated = true;
           }
 
-          controller?.setProgress(currentProgress + downloadedLength,
-              totalProgress + downloadedLength);
+          controller?.setProgress(currentProgress + downloadedLength, totalProgress + downloadedLength);
 
           if (!_isDisposed) {
-            double progress = (currentProgress + downloadedLength) /
-                (totalProgress + downloadedLength);
+            double progress = (currentProgress + downloadedLength) / (totalProgress + downloadedLength);
 
             double percent = progress * 100;
 
             progressNotifier.value = progress;
             progressPercentNotifier.value = '${percent.toStringAsFixed(2)} %';
 
-            progressSizeNotifier.value =
-                '${formatBytes(currentProgress + downloadedLength, 1)} / ${formatBytes((totalProgress + downloadedLength), 1)}';
+            progressSizeNotifier.value = '${formatBytes(currentProgress + downloadedLength, 1)} / ${formatBytes((totalProgress + downloadedLength), 1)}';
           }
 
           ///Current progress + old progress (the bytes already downloaded)
@@ -117,8 +112,7 @@ class DownloadCore {
           if (currentProgress > totalProgress) {
             token.cancel();
 
-            throw Exception(
-                'progress > totalProgress. Please start download instead of resume.');
+            throw Exception('progress > totalProgress. Please start download instead of resume.');
           }
         },
         options: isResumed
@@ -154,8 +148,7 @@ class DownloadCore {
     progressNotifier.value = length / int.parse(totalLength);
     progressPercentNotifier.value = '${percent.toStringAsFixed(2)} %';
 
-    progressSizeNotifier.value =
-        '${formatBytes(length, 1)} / ${formatBytes(int.parse(totalLength), 1)}';
+    progressSizeNotifier.value = '${formatBytes(length, 1)} / ${formatBytes(int.parse(totalLength), 1)}';
   }
 
   void dispose() {
@@ -198,8 +191,7 @@ class DownloadCore {
 
   void resume() {
     if (_isDisposed) {
-      throw Exception(
-          'Download is canceled. Start the download again and pause instead of cancel to resume.');
+      throw Exception('Download is canceled. Start the download again and pause instead of cancel to resume.');
     }
     token = CancelToken();
     startDownload(isResumed: true);

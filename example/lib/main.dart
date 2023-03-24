@@ -97,8 +97,7 @@ class _MyAppState extends State<MyApp> {
       titleText: 'Stay with time',
       // backgroundDownload: false,
       allowSkip: true,
-      contentText:
-          'Update your app to the latest version to enjoy new feature.',
+      contentText: 'Update your app to the latest version to enjoy new feature.',
       callBack: (UpdateModel model) {
         debugPrint(model.versionName);
         debugPrint(model.versionCode.toString());
