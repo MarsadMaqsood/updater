@@ -73,7 +73,7 @@ class Updater {
   ///Default is `backgroundDownload = true`
   final bool? backgroundDownload;
 
-  ///Callback which return json data
+  ///Callback, which returns JSON data
   ///
   ///`String versionName`, `int versionCode`, `String contentText`, `int minSupport`, `String downloadUrl`
   ///
@@ -136,7 +136,7 @@ class Updater {
     ///Update value in callback function
     if (callBack != null) callBack!(model);
 
-    ///Set server value to `contentText` if value is empty
+    ///Set server value to `contentText` if `contentText` value is empty
     if (contentText.isEmpty) contentText = model.contentText;
 
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
