@@ -1,6 +1,6 @@
 name: updater
 description: A package to check for the custom in-app updates for Flutter.
-version: 0.1.5
+version: 0.2.0
 homepage: https://github.com/MarsadMaqsood/updater
 
 environment:
@@ -11,17 +11,19 @@ dependencies:
   flutter:
     sdk: flutter
 
-  dio: ^4.0.6
+  dio: ^5.0.3
   http: ^0.13.5
-  # open_filex: ^4.1.1
-  open_filex: ^4.3.1
-  package_info_plus: ^3.0.2
-  path_provider: ^2.0.11
+  open_filex: ^4.3.2
+  package_info_plus: ^3.0.3
+  path_provider: ^2.0.14
+  platform: ^3.1.0
 
 dev_dependencies:
   flutter_lints: ^2.0.1
   flutter_test:
     sdk: flutter
+  mockito: ^5.3.2
+  build_runner: ^2.3.3
 
 flutter:
 

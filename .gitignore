@@ -54,3 +54,6 @@ app.*.map.json
 *.js_
 *.js.deps
 *.js.map
+
+/.idea
+/coverage
