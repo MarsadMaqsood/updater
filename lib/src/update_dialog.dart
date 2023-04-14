@@ -108,7 +108,9 @@ class _UpdateDialogState extends State<UpdateDialog> {
       ),
       elevation: widget.elevation,
       backgroundColor: Colors.white,
-      child: _changeDialog || status == UpdateStatus.Paused ? _downloadContentWidget() : _updateContentWidget(),
+      child: _changeDialog || status == UpdateStatus.Paused
+          ? _downloadContentWidget()
+          : _updateContentWidget(),
     );
   }
 
@@ -257,7 +259,10 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 builder: (context, index, _) {
                   return Text(
                     index,
-                    style: const TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold),
                   );
                 },
               ),
@@ -266,7 +271,10 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 builder: (context, index, _) {
                   return Text(
                     index,
-                    style: const TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold),
                   );
                 },
               ),
@@ -281,7 +289,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     return LinearProgressIndicator(
                       value: index == 0.0 ? null : index,
                       backgroundColor: Colors.grey,
-                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.black),
+                      valueColor:
+                          const AlwaysStoppedAnimation<Color>(Colors.black),
                     );
                   },
                 ),
@@ -292,10 +301,12 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     core.cancel();
                     return;
                   }
-                  if (status == UpdateStatus.Dowloading || status == UpdateStatus.Resume) {
+                  if (status == UpdateStatus.Dowloading ||
+                      status == UpdateStatus.Resume) {
                     core.pause();
                     _updateStatus(UpdateStatus.Paused);
-                  } else if (status == UpdateStatus.Paused || status == UpdateStatus.Cancelled) {
+                  } else if (status == UpdateStatus.Paused ||
+                      status == UpdateStatus.Cancelled) {
                     core.resume();
                     _updateStatus(UpdateStatus.Resume);
                   }

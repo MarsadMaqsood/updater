@@ -5,7 +5,7 @@ A package to check for the custom in-app updates for Flutter.
 ## ⭐ Installing
 ```
 dependencies:
-    updater: ^0.1.5
+    updater: ^0.2.0
 ```
 
 ## ⚡ Import 
@@ -100,7 +100,7 @@ url:          //App file download link
 Inside `pubspec.yaml` file
 ```yaml
 # Specify version code using +VersionCode
-version: 0.0.3+1  #Like here the VersionCode is 1
+version: 1.0.0+1  #Like here the VersionCode is 1
 ```
 
 ```dart
@@ -130,7 +130,6 @@ version: 0.0.3+1  #Like here the VersionCode is 1
         // allowSkip: false,
         contentText:
             'Update your app to the latest version to enjoy new feature.',
-        // allowSkip: false,
         callBack: (UpdateModel model) {
 
           print(model.versionName);

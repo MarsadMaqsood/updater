@@ -1,3 +1,8 @@
+## 0.2.0
+- Thanks to [gaoshanyu](https://github.com/gaoshanyu) for [#7](https://github.com/MarsadMaqsood/updater/pull/7)
+- Fix: [#8](https://github.com/MarsadMaqsood/updater/pull/8)
+
+
 ## 0.1.5
 - Updated readme
 ## 0.1.4

@@ -1,6 +1,6 @@
 name: updater_example
 description: Demonstrates how to use the updater plugin.
-version: 0.0.2+1
+version: 1.0.0+2
 publish_to: 'none'
 
 environment:

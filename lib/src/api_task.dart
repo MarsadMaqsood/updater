@@ -20,7 +20,11 @@ class APITask {
     return await _dio.post<T>(url, data: data);
   }
 
-  Future<Response> download(String url, fileName, {CancelToken? cancelToken, ProgressCallback? onReceiveProgress, Options? options, bool deleteOnError = false}) async {
+  Future<Response> download(String url, fileName,
+      {CancelToken? cancelToken,
+      ProgressCallback? onReceiveProgress,
+      Options? options,
+      bool deleteOnError = false}) async {
     return await _dio.download(
       url,
       fileName,

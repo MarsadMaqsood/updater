@@ -12,8 +12,10 @@ String formatBytes(int bytes, int decimals) {
 
 ///returns a random string of the desired [length]
 String getRandomString(int length) {
-  const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-  return String.fromCharCodes(Iterable.generate(length, (_) => chars.codeUnitAt(Random().nextInt(chars.length))));
+  const chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  return String.fromCharCodes(Iterable.generate(
+      length, (_) => chars.codeUnitAt(Random().nextInt(chars.length))));
 }
 
 ///Print error

@@ -14,7 +14,8 @@ import 'updater_test.mocks.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const packageChannel = MethodChannel('dev.fluttercommunity.plus/package_info');
+  const packageChannel =
+      MethodChannel('dev.fluttercommunity.plus/package_info');
   final log = <MethodCall>[];
 
   setUp(() {
@@ -48,16 +49,22 @@ void main() {
     );
   });
 
-  testWidgets('Should display updater with Android platform', (WidgetTester tester) async {
+  testWidgets('Should display updater with Android platform',
+      (WidgetTester tester) async {
     MockDio mockDio = MockDio();
     APITask client = APITask();
-    when(mockDio.get("https://example.com/updater.json")).thenAnswer((_) => Future(() => Response(requestOptions: RequestOptions(path: 'https://codingwithmarsad.web.app/updater.json'), data: {
-          "versionCode": 3,
-          "versionName": "1.0.2",
-          "contentText": "Please update your app",
-          "minSupport": 2,
-          "url": "https://www.animatedimages.org/data/media/597/animated-planet-image-0077.gif"
-        })));
+    when(mockDio.get("https://example.com/updater.json")).thenAnswer((_) =>
+        Future(() => Response(
+                requestOptions: RequestOptions(
+                    path: 'https://codingwithmarsad.web.app/updater.json'),
+                data: {
+                  "versionCode": 3,
+                  "versionName": "1.0.2",
+                  "contentText": "Please update your app",
+                  "minSupport": 2,
+                  "url":
+                      "https://www.animatedimages.org/data/media/597/animated-planet-image-0077.gif"
+                })));
     client.injectDioForTesting(mockDio);
 
     Updater.platform = FakePlatform(operatingSystem: Platform.android);
@@ -86,7 +93,8 @@ void main() {
     expect(isAvailable, true);
   });
 
-  testWidgets('Should not display updater without Android platform', (WidgetTester tester) async {
+  testWidgets('Should not display updater without Android platform',
+      (WidgetTester tester) async {
     Updater.platform = FakePlatform(operatingSystem: Platform.iOS);
     bool? isAvailable;
     await tester.pumpWidget(MaterialApp(

@@ -134,7 +134,8 @@ class Updater {
 
     ///Throw exception if provided download url is not valid
     if (!model.downloadUrl.contains('http')) {
-      throw Exception('Invalid download url.\nDownload url should contain http / https.');
+      throw Exception(
+          'Invalid download url.\nDownload url should contain http / https.');
     }
 
     ///Update value in callback function
@@ -153,8 +154,8 @@ class Updater {
       return false;
     }
 
-    ///Override the `allowSkip` parameter to `false`
-    /// if minimum supported version is greater or equal to the current build number
+    ///Override the `allowSkip` to `false`
+    /// if minimum supported version is greater than the current build number
     if (model.minSupport > buildNumber) {
       allowSkip = false;
     }
