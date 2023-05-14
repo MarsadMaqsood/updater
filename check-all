@@ -3,9 +3,11 @@ set -e
 flutter --version
 rm -rf ./coverage
 flutter pub get
-dart format -l 200 .
+dart format .
+# dart format -l 200 .
 flutter analyze . --no-fatal-warnings
-dart format -l 200 . --set-exit-if-changed
+dart format . --set-exit-if-changed
+# dart format -l 200 . --set-exit-if-changed
 flutter test --coverage
 
 lcov -r coverage/lcov.info '*/__test*__/*' -o coverage/lcov_cleaned.info
