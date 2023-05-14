@@ -19,22 +19,43 @@ void main() {
   final log = <MethodCall>[];
 
   setUp(() {
-    packageChannel.setMockMethodCallHandler((MethodCall methodCall) async {
-      log.add(methodCall);
-      switch (methodCall.method) {
-        case 'getAll':
-          return <String, dynamic>{
-            'appName': 'updater',
-            'buildNumber': '1',
-            'packageName': 'io.flutter.plugins.updaterexample',
-            'version': '1.0',
-            'installerStore': null,
-          };
-        default:
-          assert(false);
-          return null;
-      }
-    });
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      packageChannel,
+      (MethodCall methodCall) async {
+        log.add(methodCall);
+        switch (methodCall.method) {
+          case 'getAll':
+            return <String, dynamic>{
+              'appName': 'updater',
+              'buildNumber': '1',
+              'packageName': 'io.flutter.plugins.updaterexample',
+              'version': '1.0',
+              'installerStore': null,
+            };
+          default:
+            assert(false);
+            return null;
+        }
+      },
+    );
+
+    // packageChannel.setMockMethodCallHandler((MethodCall methodCall) async {
+    //   log.add(methodCall);
+    //   switch (methodCall.method) {
+    //     case 'getAll':
+    //       return <String, dynamic>{
+    //         'appName': 'updater',
+    //         'buildNumber': '1',
+    //         'packageName': 'io.flutter.plugins.updaterexample',
+    //         'version': '1.0',
+    //         'installerStore': null,
+    //       };
+    //     default:
+    //       assert(false);
+    //       return null;
+    //   }
+    // });
   });
 
   test('Should get app version', () async {
