@@ -1,5 +1,7 @@
 ## 0.2.1
+- Update Dart SDK `">=2.19.0 <4.0.0"`
 - Updated documentation
+- Bug fixes
 
 ## 0.2.0
 - Thanks to [gaoshanyu](https://github.com/gaoshanyu) for [#7](https://github.com/MarsadMaqsood/updater/pull/7)
