@@ -171,8 +171,6 @@ class _UpdateDialogState extends State<UpdateDialog> {
                   status = UpdateStatus.Dowloading;
 
                   core.startDownload();
-
-                  // _startDownload();
                 },
                 borderRadius: BorderRadius.circular(14),
                 child: Container(

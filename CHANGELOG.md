@@ -1,3 +1,6 @@
+## 0.2.1
+- Updated documentation
+
 ## 0.2.0
 - Thanks to [gaoshanyu](https://github.com/gaoshanyu) for [#7](https://github.com/MarsadMaqsood/updater/pull/7)
 - Fix: [#8](https://github.com/MarsadMaqsood/updater/pull/8)

@@ -135,7 +135,7 @@ class Updater {
     ///Throw exception if provided download url is not valid
     if (!model.downloadUrl.contains('http')) {
       throw Exception(
-          'Invalid download url.\nDownload url should contain http / https.');
+          'Invalid download URL.\nThe Download URL should contain http / https.');
     }
 
     ///Update value in callback function
