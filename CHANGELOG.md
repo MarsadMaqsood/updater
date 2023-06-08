@@ -1,3 +1,6 @@
+## 0.2.2
+- Updated packages to the latest version
+
 ## 0.2.1
 - Update Dart SDK `">=2.19.0 <4.0.0"`
 - Updated documentation
