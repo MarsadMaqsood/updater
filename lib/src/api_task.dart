@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 
 class APITask {
   static final APITask _instance = APITask._internal();
-  late final Dio _dio;
+  late Dio _dio;
 
   APITask._internal() {
     _dio = Dio();
