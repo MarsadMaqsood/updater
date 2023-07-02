@@ -31,10 +31,9 @@ class DownloadCore {
     required this.dismiss,
   });
 
-  bool _isUpdated = false;
   bool _isDisposed = false;
 
-  Future<void> startDownload({isResumed = false}) async {
+  Future<void> startDownload({bool isResumed = false}) async {
     Directory tempDirectory = await directory();
 
     List<FileSystemEntity> listEntity = tempDirectory.listSync();
@@ -47,27 +46,22 @@ class DownloadCore {
       totalLength = '${int.parse(totalLength) - 1}';
     }
 
-    if (!isResumed) {
+    if (isResumed) {
+      for (FileSystemEntity entity in listEntity) {
+        File file = File(entity.path);
+        downloadedLength += file.lengthSync();
+      }
+    } else {
       for (FileSystemEntity entity in listEntity) {
         File file = File(entity.path);
         file.deleteSync();
       }
     }
 
-    listEntity = tempDirectory.listSync();
-
-    for (FileSystemEntity entity in listEntity) {
-      File file = File(entity.path);
-      downloadedLength = downloadedLength + file.lengthSync();
-    }
-
-    int index = 0;
-
-    if (listEntity.isNotEmpty) {
-      index =
-          int.tryParse(listEntity.last.path.split('-').last.split('.').first) ??
-              0;
-    }
+    int index = listEntity.isNotEmpty
+        ? int.tryParse(listEntity.last.path.split('-').last.split('.').first) ??
+            0
+        : 0;
 
     String fileName = '${tempDirectory.path}/app$id-${index + 1}.apk';
 
@@ -77,13 +71,12 @@ class DownloadCore {
         fileName,
         cancelToken: token,
         onReceiveProgress: (currentProgress, totalProgress) {
-          if (!_isUpdated) {
+          if (controller?.status == UpdateStatus.none) {
             controller?.setValue(UpdateStatus.Dowloading);
-            _isUpdated = true;
           }
 
-          final cp = currentProgress + downloadedLength;
-          final tp = totalProgress + downloadedLength;
+          final int cp = currentProgress + downloadedLength;
+          final int tp = totalProgress + downloadedLength;
 
           controller?.setProgress(cp, tp);
 
@@ -99,23 +92,19 @@ class DownloadCore {
                 '${formatBytes(cp, 1)} / ${formatBytes(tp, 1)}';
           }
 
-          ///Current progress + old progress (the bytes already downloaded)
-          if (cp == totalProgress) {
-            //Update Controller
-            controller?.setValue(UpdateStatus.Completed);
+          if (currentProgress == totalProgress) {
+            //if the download was resumed then merge all the files
+            // otherwise open the downloaded file
+            if (isResumed) {
+              _mergeFiles(tempDirectory);
+            } else {
+              OpenFilex.open(fileName);
+            }
 
-            //Dismiss the dialog
-            if (!_isDisposed) dismiss.call();
-
-            ///Open the downloaded apk file
-            // OpenFilex.open('${tempDirectory.path}/app.apk');
-            OpenFilex.open(fileName);
-          }
-
-          if (currentProgress == totalProgress && isResumed) {
-            controller?.setValue(UpdateStatus.Completed);
-            dismiss.call();
-            _mergeFiles(tempDirectory);
+            if (!_isDisposed) {
+              dismiss.call();
+              controller?.setValue(UpdateStatus.Completed);
+            }
           }
 
           if (currentProgress > totalProgress) {
@@ -148,7 +137,7 @@ class DownloadCore {
     int length = 0;
 
     for (FileSystemEntity entity in listEntity) {
-      length = length + File(entity.path).lengthSync();
+      length += File(entity.path).lengthSync();
     }
 
     String totalLength = await checkFileSize();
@@ -174,18 +163,15 @@ class DownloadCore {
       await file.delete();
     }
 
-    List<int> list = [];
+    IOSink outputFile = file.openWrite(mode: FileMode.write);
 
     for (FileSystemEntity entity in listEntity) {
-      var byte = await File(entity.path).readAsBytes();
-      list.addAll(byte);
+      List<int> bytes = await File(entity.path).readAsBytes();
+      outputFile.add(bytes);
     }
 
-    await file.writeAsBytes(
-      list,
-    );
+    await outputFile.close();
 
-    // OpenFile.open(file.path);
     OpenFilex.open(file.path);
   }
 

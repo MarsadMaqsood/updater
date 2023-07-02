@@ -3,14 +3,13 @@ import 'package:flutter/foundation.dart';
 
 class APITask {
   static final APITask _instance = APITask._internal();
+  late final Dio _dio;
 
   APITask._internal() {
     _dio = Dio();
   }
 
   factory APITask() => _instance;
-
-  late Dio _dio;
 
   Future<Response<T>> get<T>(String url) async {
     return await _dio.get<T>(url);
