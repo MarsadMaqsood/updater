@@ -72,7 +72,7 @@ class DownloadCore {
         cancelToken: token,
         onReceiveProgress: (currentProgress, totalProgress) {
           if (controller?.status == UpdateStatus.none) {
-            controller?.setValue(UpdateStatus.Dowloading);
+            controller?.setValue(UpdateStatus.Downloading);
           }
 
           final int cp = currentProgress + downloadedLength;
