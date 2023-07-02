@@ -12,7 +12,7 @@ enum UpdateStatus {
   Pending,
 
   ///when an update starts downloading
-  Dowloading,
+  Downloading,
 
   ///when the update is downloaded and ready to install
   Completed,

@@ -19,7 +19,7 @@ class UpdateDialog extends StatefulWidget {
     this.cancelText,
     required this.elevation,
     required this.token,
-    this.status = UpdateStatus.Dowloading,
+    this.status = UpdateStatus.Downloading,
     required this.id,
     required this.enableResume,
   });
@@ -168,7 +168,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                   setState(() {
                     _changeDialog = true;
                   });
-                  status = UpdateStatus.Dowloading;
+                  status = UpdateStatus.Downloading;
 
                   core.startDownload();
                 },
@@ -299,7 +299,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                     core.cancel();
                     return;
                   }
-                  if (status == UpdateStatus.Dowloading ||
+                  if (status == UpdateStatus.Downloading ||
                       status == UpdateStatus.Resume) {
                     core.pause();
                     _updateStatus(UpdateStatus.Paused);
@@ -316,7 +316,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                 icon: Icon(
                   !widget.enableResume
                       ? Icons.clear_rounded
-                      : (status == UpdateStatus.Dowloading
+                      : (status == UpdateStatus.Downloading
                           ? Icons.clear_rounded
                           : status == UpdateStatus.Resume
                               ? Icons.pause_rounded
