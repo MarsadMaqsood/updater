@@ -193,10 +193,8 @@ class Updater {
   ///Cancel token for canceling [Dio] download.
   final CancelToken _token = CancelToken();
 
-  Widget get _buildDialog => WillPopScope(
-        onWillPop: () async {
-          return allowSkip;
-        },
+  Widget get _buildDialog => PopScope(
+        canPop: allowSkip,
         child: _buildDialogUI,
       );
 
