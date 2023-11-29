@@ -1,3 +1,6 @@
+## 0.2.4
+- Updated packages to the latest version
+
 ## 0.2.3
 - Updated packages to the latest version
 - Bug fixes
