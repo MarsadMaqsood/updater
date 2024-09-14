@@ -168,14 +168,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.12.0"
-  open_filex:
-    dependency: transitive
-    description:
-      name: open_filex
-      sha256: a6c95237767c5647e68b71a476602fcf4f1bfc530c126265e53addae22ef5fc2
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.3.4"
   package_info_plus:
     dependency: transitive
     description:
