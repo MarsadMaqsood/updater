@@ -34,6 +34,7 @@ class Updater {
     this.backgroundDownload = true,
     this.elevation,
     this.delay,
+    this.headers,
     this.enableResume = true,
   }) : assert(url.contains('http') == true, "Update url is not valid!") {
     id ??= getRandomString(8);
@@ -41,6 +42,8 @@ class Updater {
 
   ///Unique id of download process
   String? id;
+
+  final Map<String, dynamic>? headers;
 
   ///Build Context
   final BuildContext context;
@@ -121,7 +124,7 @@ class Updater {
 
     controller?.setValue(UpdateStatus.Checking);
 
-    Response response = await APITask().get(url);
+    Response response = await APITask().get(url, headers);
     dynamic data = response.data;
 
     UpdateModel model = UpdateModel(
@@ -215,6 +218,7 @@ class Updater {
       status: _status,
       enableResume: enableResume,
       token: _token,
+      headers: headers,
     );
   }
 
