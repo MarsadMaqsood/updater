@@ -22,6 +22,7 @@ class UpdateDialog extends StatefulWidget {
     this.status = UpdateStatus.Downloading,
     required this.id,
     required this.enableResume,
+    this.headers,
   });
 
   final BuildContext context;
@@ -44,6 +45,7 @@ class UpdateDialog extends StatefulWidget {
   final bool allowSkip;
   final bool backgroundDownload;
   final bool enableResume;
+  final Map<String, dynamic>? headers;
   final double elevation;
   final UpdaterController? controller;
   final CancelToken token;
@@ -79,6 +81,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
       id: widget.id,
       url: widget.downloadUrl,
       token: widget.token,
+      headers: widget.headers,
       progressNotifier: progressNotifier,
       progressPercentNotifier: progressPercentNotifier,
       progressSizeNotifier: progressSizeNotifier,

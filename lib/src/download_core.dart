@@ -19,6 +19,7 @@ class DownloadCore {
 
   final UpdaterController? controller;
   final Function dismiss;
+  final Map<String, dynamic>? headers;
 
   DownloadCore({
     required this.id,
@@ -28,6 +29,7 @@ class DownloadCore {
     required this.progressPercentNotifier,
     required this.progressSizeNotifier,
     this.controller,
+    this.headers,
     required this.dismiss,
   });
 
@@ -66,6 +68,18 @@ class DownloadCore {
     String fileName = '${tempDirectory.path}/app$id-${index + 1}.apk';
 
     try {
+      final options = isResumed
+        ? Options(
+          headers: {
+            'range': 'bytes=$downloadedLength-',
+          },
+          responseType: ResponseType.stream,
+        ) : Options(headers: {});
+
+      if(headers != null) {
+        options.headers!.addAll(headers!);
+      }
+
       await APITask().download(
         url,
         fileName,
@@ -114,15 +128,7 @@ class DownloadCore {
                 'progress > totalProgress. Please start download instead of resume.');
           }
         },
-        options: isResumed
-            ? Options(
-                headers: {
-                  'range': 'bytes=$downloadedLength-',
-                  // 'range': 'bytes=$downloadedLength-$totalLength',
-                },
-                responseType: ResponseType.stream,
-              )
-            : Options(),
+        options: options,
         deleteOnError: false,
       );
     } catch (e) {

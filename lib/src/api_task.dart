@@ -11,8 +11,8 @@ class APITask {
 
   factory APITask() => _instance;
 
-  Future<Response<T>> get<T>(String url) async {
-    return await _dio.get<T>(url);
+  Future<Response<T>> get<T>(String url, Map<String, dynamic>? headers) async {
+    return await _dio.get<T>(url, options: Options(headers: headers));
   }
 
   Future<Response<T>> post<T>(String url, Map<String, dynamic> data) async {
