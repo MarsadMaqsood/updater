@@ -1,6 +1,6 @@
 class VersionModel {
   String version;
-  String buildNumber;
+  int buildNumber;
 
   VersionModel(
     this.version,

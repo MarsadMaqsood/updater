@@ -32,7 +32,7 @@ migrate_working_dir/
 .pub/
 /build/
 # If you're building an application, you may want to check-in your pubspec.lock
-pubspec.lock
+*.lock
 *.env
 
 # Symbolication related
