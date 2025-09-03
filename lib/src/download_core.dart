@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:install_plugin/install_plugin.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:updater/updater.dart';
 import 'package:updater/utils/constants.dart';
@@ -61,7 +61,8 @@ class DownloadCore {
     }
 
     int index = listEntity.isNotEmpty
-        ? int.tryParse(listEntity.last.path.split('-').last.split('.').first) ?? 0
+        ? int.tryParse(listEntity.last.path.split('-').last.split('.').first) ??
+            0
         : 0;
 
     String fileName = '${tempDirectory.path}/app$id-${index + 1}.apk';
@@ -83,7 +84,7 @@ class DownloadCore {
         url,
         fileName,
         cancelToken: token,
-        onReceiveProgress: (currentProgress, totalProgress) async {
+        onReceiveProgress: (currentProgress, totalProgress) {
           if (controller?.status == UpdateStatus.none) {
             controller?.setValue(UpdateStatus.Downloading);
           }
@@ -101,7 +102,8 @@ class DownloadCore {
             progressNotifier.value = progress;
             progressPercentNotifier.value = '${percent.toStringAsFixed(2)} %';
 
-            progressSizeNotifier.value = '${formatBytes(cp, 1)} / ${formatBytes(tp, 1)}';
+            progressSizeNotifier.value =
+                '${formatBytes(cp, 1)} / ${formatBytes(tp, 1)}';
           }
 
           if (currentProgress == totalProgress) {
@@ -109,21 +111,21 @@ class DownloadCore {
             // otherwise open the downloaded file
             if (isResumed) {
               _mergeFiles(tempDirectory);
+            } else {
+              OpenFilex.open(fileName);
             }
-            // else {
-            //   OpenFilex.open(fileName);
-            // }
 
             if (!_isDisposed) {
               dismiss.call();
               controller?.setValue(UpdateStatus.Completed);
-              await InstallPlugin.install(fileName);
             }
           }
 
           if (currentProgress > totalProgress) {
             token.cancel();
-            throw Exception('progress > totalProgress. Please start download instead of resume.');
+
+            throw Exception(
+                'progress > totalProgress. Please start download instead of resume.');
           }
         },
         options: options,
@@ -175,8 +177,8 @@ class DownloadCore {
     }
 
     await outputFile.close();
-    await InstallPlugin.install(file.path);
-    // OpenFilex.open(file.path);
+
+    OpenFilex.open(file.path);
   }
 
   void cancel() {
