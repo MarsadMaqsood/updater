@@ -69,14 +69,15 @@ class DownloadCore {
 
     try {
       final options = isResumed
-        ? Options(
-          headers: {
-            'range': 'bytes=$downloadedLength-',
-          },
-          responseType: ResponseType.stream,
-        ) : Options(headers: {});
+          ? Options(
+              headers: {
+                'range': 'bytes=$downloadedLength-',
+              },
+              responseType: ResponseType.stream,
+            )
+          : Options(headers: {});
 
-      if(headers != null) {
+      if (headers != null) {
         options.headers!.addAll(headers!);
       }
 

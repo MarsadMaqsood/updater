@@ -1,8 +1,8 @@
-library updater;
+library;
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter/services.dart';
 import 'package:platform/platform.dart';
 import 'package:updater/model/update_model.dart';
 import 'package:updater/src/controller.dart';
@@ -147,8 +147,8 @@ class Updater {
     ///Set server value to `contentText` if `contentText` value is empty
     if (contentText.isEmpty) contentText = model.contentText;
 
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    int buildNumber = int.parse(packageInfo.buildNumber);
+    final appVersion = await getAppVersion();
+    int buildNumber = appVersion.buildNumber;
 
     ///Return `false` if current build number is greater
     ///than the update version.
@@ -172,6 +172,7 @@ class Updater {
     if (withDialog) {
       Future.delayed(Duration.zero).then((value) {
         showDialog(
+            // ignore: use_build_context_synchronously
             context: context,
             barrierDismissible: allowSkip,
             builder: (_) {
@@ -238,9 +239,7 @@ class Updater {
 /// ```
 ///
 Future<VersionModel> getAppVersion() async {
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  String version = packageInfo.version;
-  String buildNumber = packageInfo.buildNumber;
-
-  return VersionModel(version, buildNumber);
+  const channel = MethodChannel('updater');
+  final result = await channel.invokeMethod('getAppVersion');
+  return VersionModel(result['versionName'], result['versionCode']);
 }
