@@ -14,59 +14,41 @@ import 'updater_test.mocks.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const packageChannel =
-      MethodChannel('dev.fluttercommunity.plus/package_info');
+  const updaterChannel = MethodChannel('updater');
   final log = <MethodCall>[];
 
   setUp(() {
+    // Mock the updater MethodChannel
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
-      packageChannel,
+      updaterChannel,
       (MethodCall methodCall) async {
         log.add(methodCall);
         switch (methodCall.method) {
-          case 'getAll':
-            return <String, dynamic>{
-              'appName': 'updater',
-              'buildNumber': '1',
+          case 'getAppVersion':
+            return {
+              'versionName': '1.0',
+              'versionCode': 1,
               'packageName': 'io.flutter.plugins.updaterexample',
-              'version': '1.0',
-              'installerStore': null,
+              'appName': 'updater',
             };
+          case 'download':
+            final args = methodCall.arguments as Map<dynamic, dynamic>;
+            return args['savePath']; // simulate success by returning savePath
           default:
-            assert(false);
             return null;
         }
       },
     );
-
-    // packageChannel.setMockMethodCallHandler((MethodCall methodCall) async {
-    //   log.add(methodCall);
-    //   switch (methodCall.method) {
-    //     case 'getAll':
-    //       return <String, dynamic>{
-    //         'appName': 'updater',
-    //         'buildNumber': '1',
-    //         'packageName': 'io.flutter.plugins.updaterexample',
-    //         'version': '1.0',
-    //         'installerStore': null,
-    //       };
-    //     default:
-    //       assert(false);
-    //       return null;
-    //   }
-    // });
   });
 
-  test('Should get app version', () async {
+  test('Should get app version from platform channel', () async {
     VersionModel model = await getAppVersion();
     String version = '${model.version}.${model.buildNumber}';
     expect(version, '1.0.1');
     expect(
       log,
-      <Matcher>[
-        isMethodCall('getAll', arguments: null),
-      ],
+      contains(isMethodCall('getAppVersion', arguments: null)),
     );
   });
 
@@ -74,18 +56,24 @@ void main() {
       (WidgetTester tester) async {
     MockDio mockDio = MockDio();
     APITask client = APITask();
-    when(mockDio.get("https://example.com/updater.json")).thenAnswer((_) =>
-        Future(() => Response(
-                requestOptions: RequestOptions(
-                    path: 'https://codingwithmarsad.web.app/updater.json'),
-                data: {
-                  "versionCode": 3,
-                  "versionName": "1.0.2",
-                  "contentText": "Please update your app",
-                  "minSupport": 2,
-                  "url":
-                      "https://www.animatedimages.org/data/media/597/animated-planet-image-0077.gif"
-                })));
+    when(mockDio.get(
+      "https://example.com/updater.json",
+      options: anyNamed('options'),
+      queryParameters: anyNamed('queryParameters'),
+      data: anyNamed('data'),
+      cancelToken: anyNamed('cancelToken'),
+      onReceiveProgress: anyNamed('onReceiveProgress'),
+    )).thenAnswer((_) async => Response(
+          requestOptions:
+              RequestOptions(path: 'https://example.com/updater.json'),
+          data: {
+            "versionCode": 3,
+            "versionName": "1.0.2",
+            "contentText": "Please update your app",
+            "minSupport": 2,
+            "url": "https://example.com/update/app.apk"
+          },
+        ));
     client.injectDioForTesting(mockDio);
 
     Updater.platform = FakePlatform(operatingSystem: Platform.android);
